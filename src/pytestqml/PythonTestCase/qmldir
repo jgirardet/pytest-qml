@@ -1,0 +1,3 @@
+module PythonTestCase
+TestCase 1.0 TestCase.qml
+TestCase 1.1 TestCaseQt.qml

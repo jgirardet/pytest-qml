@@ -1,0 +1,10 @@
+site_name: pytest-qml
+site_description: Run QML Tests with pytest
+site_author: Jimmy Girardet
+
+theme: readthedocs
+
+repo_url: https://github.com/jgirardet/pytest-qml
+
+pages:
+- Home: index.md

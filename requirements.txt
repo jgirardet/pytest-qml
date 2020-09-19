@@ -1,0 +1,6 @@
+# just for dev
+pyside2
+pytest-qt
+pytest
+pdbpp
+tox
