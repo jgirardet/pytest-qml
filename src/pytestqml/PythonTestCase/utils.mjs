@@ -74,6 +74,7 @@ class CleanupError extends PyTestError {
         this.message = message
   }
 }
-export { CompareError, PyTestError, SkipError, CleanupError };
+
+export { CompareError, PyTestError, SkipError, CleanupError};
 
 

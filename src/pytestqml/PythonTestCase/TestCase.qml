@@ -48,7 +48,10 @@ Item {
         property bool windowShown: qmlbot ? qmlbot.windowShown : false
 //        onWindowShownChanged: qmlbot.debug("changed"+windowShown)
 
-
+        /*
+            temporaryObjects: created by createTemporaryObject. cleaned up at end of the test
+        */
+        property var temporaryObjects: []
 
         onTestToRunChanged:{
             try {
@@ -86,10 +89,15 @@ Item {
           collected[testName]()
             }
         catch (err){
-           res=err.toObj()
+            if (err.type) {
+                res = err.toObj()
+            } else {
+                 res = {"type": err.name, "message": err.message, "stack": err.stack}
+            }
          }
         try {
         cleanup()
+        temporaryObjects = []
         } catch (cleanupErr) {
             let error = new U.CleanupError(cleanupErr.message, {"other":res})
             error.stask  = cleanupErr.stack
@@ -115,6 +123,22 @@ Item {
       }
 
     /*
+        createTemporaryObject
+
+        See cleanup for differences with C++/QT
+    */
+    function createTemporaryObject(component, parent, properties={})  {
+      if (component.status != 1) {
+        throw new U.PytestError(`${component.errorString()}`)
+      }
+      let obj = component.createObject(parent, properties)
+
+      temporaryObjects.push(obj)
+      return obj
+    }
+
+
+    /*
         fail the current test with msg
     */
     function fail(msg) {
@@ -134,6 +158,9 @@ Item {
 
     /*
         cleanup the current test
+
+        Not so useful as C++/Qt implementation since each test is run
+        independently so everything wil be destroyed after the test, whatever happen.
 
     */
     function cleanup() {

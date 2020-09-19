@@ -241,6 +241,19 @@ def test_cleanup(gabarit):
         function test_init(){
         }
     }
-    """, "-vv")
+    """)
     r.assert_outcomes(failed=1)
     r.stdout.fnmatch_lines_random(["*just to see if cleanup called*"])
+
+
+def test_createTemporaryObjects(file1cas1test1):
+    t,r = file1cas1test1("""
+    var comp = Qt.createComponent("Rec.qml")
+    var obj = createTemporaryObject(comp, parent, {"height":3});
+    compare(obj.height, 3)  
+    compare(obj.width, 99)  
+    """, run=False)
+    t.makefile(".qml", Rec="""import QtQuick 2.0; Item {height: 66; width:99}""")
+    r = t.runpytest("-s")
+    r.assert_outcomes(passed=1)
+

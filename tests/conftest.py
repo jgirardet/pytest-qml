@@ -35,6 +35,7 @@ Item {
 @pytest.fixture
 def file1cas1test1(testdir):
     def wrapped(fn,  *args, run=True):
+        result = None
         testdir.makefile(
             ".qml",
             tst_BBB=BASE1CAS1TEST.substitute(fn=fn),
@@ -48,6 +49,7 @@ def file1cas1test1(testdir):
 @pytest.fixture
 def gabarit(testdir):
     def wrapped(content, *args, run=True):
+        result = None
         testdir.makefile(
             ".qml",
             tst_BBB=GABARIT.substitute(content=content),

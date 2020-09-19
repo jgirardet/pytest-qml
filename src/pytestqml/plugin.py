@@ -109,7 +109,7 @@ class QMLItem(pytest.Item):
         qmlbot = self.parent.qmlbot
 
         with qmlbot.wait_signal(
-                self.testcase.testCompleted, timeout=10000, raising=True
+                self.testcase.testCompleted, timeout=10000, raising=True,
         ) as block:
             self.testcase.setProperty("testToRun", self.testname)
             view.show()
