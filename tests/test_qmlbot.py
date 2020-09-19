@@ -78,24 +78,12 @@ def test_wait(bot):
 def test_compare():
     pass # tested in test_TestCase.py
 
-# def test_windowShown(bot: QmlBot, qtbot):
-#     assert not bot.windowShown
-#     bot.view.show()
-#     qtbot.wait_until(lambda: bot.view.isExposed())
-#     assert bot.windowShown
-
-def test_CI_fail(qtbot):
-    # assert not bot.windowShown
-    v = QQuickView()
-    v.show()
-    # qtbot.wait_until(lambda: v.visible)
-    # assert bot.windowShown
-def test_CI_fail2(qtbot):
+def test_windowShown(bot: QmlBot, qtbot):
     assert not bot.windowShown
-    v = QQuickView()
-    v.show()
-    qtbot.wait_until(lambda: v.isExposed())
+    bot.view.show()
+    qtbot.wait_until(lambda: bot.view.isExposed())
     assert bot.windowShown
+
 
 def test_settings(bot: QmlBot):
     assert bot._settings == {}
