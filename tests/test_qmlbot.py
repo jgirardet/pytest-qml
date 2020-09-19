@@ -87,7 +87,7 @@ def test_compare():
 def test_CI_fail(qtbot):
     # assert not bot.windowShown
     v = QQuickView()
-    v.show()
+    # v.show()
     qtbot.wait_until(lambda: v.isExposed())
     # assert bot.windowShown
 
