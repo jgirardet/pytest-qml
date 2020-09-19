@@ -70,10 +70,10 @@ def test_wait(bot):
     delta = (d2-d1)*1000
     assert delta < 0.1
     d1 = time()
-    bot.wait(10)
+    bot.wait(100)
     d2 = time()
     delta = (d2-d1)*1000
-    assert delta == pytest.approx(10, 1)
+    assert delta == pytest.approx(100, 10)
 
 def test_compare():
     pass # tested in test_TestCase.py
