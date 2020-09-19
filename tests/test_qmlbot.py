@@ -91,11 +91,11 @@ def test_CI_fail(qtbot):
     # qtbot.wait_until(lambda: v.visible)
     # assert bot.windowShown
 def test_CI_fail2(qtbot):
-    # assert not bot.windowShown
+    assert not bot.windowShown
     v = QQuickView()
     v.show()
     qtbot.wait_until(lambda: v.isExposed())
-    # assert bot.windowShown
+    assert bot.windowShown
 
 def test_settings(bot: QmlBot):
     assert bot._settings == {}
