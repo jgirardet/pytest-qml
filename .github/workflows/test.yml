@@ -36,6 +36,7 @@ jobs:
         pip install tox
     - name: Test with tox
       run: |
+        if: ${{ format('{{{0}-{1}{2} }}', matrix.tox-env, matrix.qt-lib, matrix.qtversion) != 'py39-pyside214' }}
         tox -e ${{ matrix.tox-env }}-${{ matrix.qt-lib }}${{ matrix.qtversion }} -- -ra --color=yes
 #
 #  deploy:
