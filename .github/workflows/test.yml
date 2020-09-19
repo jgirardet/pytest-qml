@@ -11,6 +11,7 @@ jobs:
 
       matrix:
         python-version: [3.6, 3.7, 3.8, "3.9.0-rc.1"]
+#        python-version: [3.6, 3.7, 3.8, "3.9.0-rc.1"]
         qt-lib: [pyqt5, pyside2]
         qtversion: [14, 15]
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -21,8 +22,8 @@ jobs:
             tox-env: "py37"
           - python-version: "3.8"
             tox-env: "py38"
-          - python-version: "3.9.0-rc.1"
-            tox-env: "py39"
+#          - python-version: "3.9.0-rc.1"
+#            tox-env: "py39"
 
     steps:
     - uses: actions/checkout@v2
@@ -36,8 +37,8 @@ jobs:
         pip install tox
     - name: Test with tox
       run: |
-        if: ${{ format('{{{0}-{1}{2} }}', matrix.tox-env, matrix.qt-lib, matrix.qtversion) != 'py39-pyside214' }}
         tox -e ${{ matrix.tox-env }}-${{ matrix.qt-lib }}${{ matrix.qtversion }} -- -ra --color=yes
+#        if: ${{ format('{{{0}-{1}{2} }}', matrix.tox-env, matrix.qt-lib, matrix.qtversion) != 'py39-pyside214' }}
 #
 #  deploy:
 #
