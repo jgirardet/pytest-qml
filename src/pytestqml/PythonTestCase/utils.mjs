@@ -67,6 +67,13 @@ class SkipError extends PyTestError {
         this.message = message
   }
 }
-export { CompareError, PyTestError, SkipError };
+class CleanupError extends PyTestError {
+  constructor(message, extra) {
+        super(message, extra);
+        this.type = "CleanupError"
+        this.message = message
+  }
+}
+export { CompareError, PyTestError, SkipError, CleanupError };
 
 

@@ -88,6 +88,14 @@ Item {
         catch (err){
            res=err.toObj()
          }
+        try {
+        cleanup()
+        } catch (cleanupErr) {
+            let error = new U.CleanupError(cleanupErr.message, {"other":res})
+            error.stask  = cleanupErr.stack
+            res = error.toObj()
+            qmlbot.debug(res)
+        }
         result = res
         running=false
         testCompleted()
@@ -123,6 +131,13 @@ Item {
 
     }
 
+
+    /*
+        cleanup the current test
+
+    */
+    function cleanup() {
+    }
 
     /*
         Skip the current test

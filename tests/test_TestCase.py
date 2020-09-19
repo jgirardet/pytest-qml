@@ -231,3 +231,16 @@ def test_init(gabarit):
     }
     """, "-vv")
     r.assert_outcomes(passed=1)
+
+def test_cleanup(gabarit):
+    t, r = gabarit("""
+    TestCase {
+        name: "TestBla"
+        property string hello: "hello"
+        function cleanup () {throw new Error("just to see if cleanup called")}
+        function test_init(){
+        }
+    }
+    """, "-vv")
+    r.assert_outcomes(failed=1)
+    r.stdout.fnmatch_lines_random(["*just to see if cleanup called*"])
