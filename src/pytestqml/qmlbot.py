@@ -35,7 +35,7 @@ class QmlBot(QObject):
 
 
     """
-    Slots are used in PythonTestCase. they should not be called directly but via a method of PythonTestCase.qml
+    Slots are used in PyTest. they should not be called directly but via a method of PyTest.qml
     
     """
 

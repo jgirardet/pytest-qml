@@ -8,7 +8,7 @@ from string import Template
 import pytest
 import pytestqml
 
-TESTCASE = (Path(pytestqml.__path__[0]) / "PythonTestCase" / "TestCase.qml").read_text()
+TESTCASE = (Path(pytestqml.__path__[0]) / "PyTest" / "TestCase.qml").read_text()
 
 ITEM_EMPTY = """
 import QtQuick 2.14
@@ -18,7 +18,7 @@ Item {
 
 ITEM_1Case_EMPTY = """
 import QtQuick 2.14
-import PythonTestCase 1.0
+import PyTest 1.0
 Item {
     TestCase {}
 }
@@ -26,7 +26,7 @@ Item {
 
 ITEM_1Case_1Test = """
 import QtQuick 2.14
-import PythonTestCase 1.0
+import PyTest 1.0
 Item {
     TestCase {
         name: "TestBla"
@@ -37,7 +37,7 @@ Item {
 
 ITEM_1Case_2Test = """
 import QtQuick 2.14
-import PythonTestCase 1.0
+import PyTest 1.0
 Item {
     TestCase {
         name: "TestBla"
@@ -49,7 +49,7 @@ Item {
 
 ITEM_2Case_4Test = """
 import QtQuick 2.14
-import PythonTestCase 1.0
+import PyTest 1.0
 Item {
     TestCase {
         name: "TestBla"
@@ -66,7 +66,7 @@ Item {
 
 ITEM_1Case_1Test_cp = """
 import QtQuick 2.14
-import PythonTestCase 1.0
+import PyTest 1.0
 Item {
     TestCase {
         name: "TestBla"
@@ -79,7 +79,7 @@ Item {
 
 ITEM_1Case_1Test_pass = """
 import QtQuick 2.14
-import PythonTestCase 1.0
+import PyTest 1.0
 Item {
     TestCase {
         name: "TestBla"
@@ -90,7 +90,7 @@ Item {
 ITEM_1Case_1Test_pass_async = Template(
     """
 import QtQuick 2.14
-import PythonTestCase 1.0
+import PyTest 1.0
 Item {
     TestCase {
         name: "TestBla"
@@ -111,7 +111,7 @@ Item {
 
 DIVERS = """
 import QtQuick 2.14
-import PythonTestCase 1.0
+import PyTest 1.0
 import QtQuick.Controls 2.14
 Button {
     id: button

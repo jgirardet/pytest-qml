@@ -9,7 +9,7 @@ pytest_plugins = "pytester"
 BASE1CAS1TEST = Template(
     """
 import QtQuick 2.14
-import PythonTestCase 1.0
+import PyTest 1.0
 Item {
     TestCase {
         id: testcase
@@ -25,7 +25,7 @@ Item {
 GABARIT = Template(
     """
 import QtQuick 2.14
-import PythonTestCase 1.0
+import PyTest 1.0
 Item {
     ${content}
 }

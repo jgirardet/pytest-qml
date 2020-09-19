@@ -4,7 +4,7 @@ import pytest
 COMPARE = Template(
     """
 import QtQuick 2.14
-import PythonTestCase 1.0
+import PyTest 1.0
 Item {
     Item {
         id: obj1
@@ -37,7 +37,7 @@ Item {
 WINDOW_SHOWN = Template(
     """
 import QtQuick 2.14
-import PythonTestCase 1.0
+import PyTest 1.0
 Item {
     id: root
     TestCase {
