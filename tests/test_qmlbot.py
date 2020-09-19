@@ -88,6 +88,12 @@ def test_CI_fail(qtbot):
     # assert not bot.windowShown
     v = QQuickView()
     # v.show()
+    qtbot.wait_until(lambda: v.visible)
+    # assert bot.windowShown
+def test_CI_fail2(qtbot):
+    # assert not bot.windowShown
+    v = QQuickView()
+    # v.show()
     qtbot.wait_until(lambda: v.isExposed())
     # assert bot.windowShown
 
