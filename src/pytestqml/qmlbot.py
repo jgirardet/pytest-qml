@@ -6,6 +6,12 @@ from pytestqt.wait_signal import MultiSignalBlocker
 
 
 class QmlBot(QObject):
+    """
+    Backend used in TestCase for various things.
+    view: QQuickView
+    settings: dict
+
+    """
     def __init__(self, view, settings={}):
         super().__init__()
         self.view = view
@@ -34,13 +40,18 @@ class QmlBot(QObject):
     """
 
     @Slot("QVariant")
-    def debug(self, value):
+    def debug(self, value:Any):
         if isinstance(value, QJSValue):
             value = value.toVariant()
         print(value)
 
     @Slot("QVariant", "QVariant", result=bool)
-    def compare(self, lhs, rhs):
+    def compare(self, lhs:Any, rhs:Any) -> bool:
+        """
+        Used in TestCase.compare.
+        It assumes lhs, rhs are of the same type.
+
+        """
         if isinstance(lhs, QJSValue):
             lhs = lhs.toVariant()
         if isinstance(rhs, QJSValue):
@@ -49,16 +60,17 @@ class QmlBot(QObject):
 
     windowShownChanged = Signal()
     @Property(bool, notify=windowShownChanged)
-    def windowShown(self):
-        # print("windowssho",self.view.isExposed())
+    def windowShown(self) -> bool:
         return self.view.isExposed()
 
 
     @Slot(int)
-    def wait(self, ms: int):
+    def wait(self, ms: int) -> None:
+        """
+        Non UI Blocking wait
+        """
         QtBot.wait(self, ms)
 
-    # @Slot(str, result=str)
     @Slot(str, result=int)
     def settings(self, key: str, value:Any=None):
         return self._settings[key]

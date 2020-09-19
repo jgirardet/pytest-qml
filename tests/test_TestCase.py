@@ -166,7 +166,7 @@ def test_when_fail(gabarit):
         function test_when_fail() {
         }
         when: false
-        Component.onCompleted: qmlbot.setSettings("whenTimeout", 2000)
+        Component.onCompleted: qmlbot.setSettings("whenTimeout", 100)
     }""")
     r.assert_outcomes(failed=1)
     r.stdout.fnmatch_lines_random(["*property 'when' never got value 'true'*"])
@@ -197,19 +197,18 @@ def test_when_wait_and_pass(gabarit):
     }
     """)
     r.assert_outcomes(passed=1)
-#
-#
-# def test_windowShown(gabarit):
-#     t, r = gabarit("""
-#     TestCase {
-#         name: "TestBla"
-#         function test_bla() {
-#         }
-#         when: windowShown
-#     }""")
-#     r.assert_outcomes(failed=1)
-#     r.stdout.fnmatch_lines_random(["*property 'when' never got value 'true'*"])
-#     # assert False
-#     # r.stdout.fnmatch_lines_random(["*FAsILURES*"])
 
+
+def test_verify_pass(file1cas1test1):
+    t, r = file1cas1test1("""
+    verify(true)
+    """)
+    r.assert_outcomes(passed=1)
+
+
+def test_verify_fail(file1cas1test1):
+    t, r = file1cas1test1("""
+    verify(false)
+    """)
+    r.assert_outcomes(failed=1)
 

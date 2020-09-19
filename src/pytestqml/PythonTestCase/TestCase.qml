@@ -99,7 +99,6 @@ Item {
         compare values and throws msg if lhs != rhs
     */
     function compare(lhs, rhs, msg="") {
-       qmlbot.debug('dans compare')
       let res = false
       if (typeof lhs === typeof rhs){
         res = qmlbot.compare(lhs, rhs)
@@ -149,17 +148,6 @@ Item {
             timeout = 5000
         if (msg === undefined)
             msg = "property " + prop
-//        let i = 0
-//        let res = false
-//        while (i < timeout){
-//            qmlbot.debug(["dasn boul", obj[prop], value])
-//            res = qmlbot.compare(obj[prop], value)
-//            if (res)
-//                return
-//            wait(50)
-//            i+=50
-//        }
-
         if (!qmlbot.compare(obj[prop], value))
             wait(0)
         var i = 0
@@ -172,9 +160,11 @@ Item {
                     i += 50
                 }
         compare(obj[prop], value, `tryCompare: property '${prop}' never got value '${value}'`)
+     }
 
-//        throw new U.CompareError(`tryCompare: property '${prop}' never got value '${value}'`, {"lhs":obj[prop], "rhs":value})
-    }
+     function verify(condition, message="") {
+        compare(condition, true)
+     }
 
 
      Component.onCompleted: {
