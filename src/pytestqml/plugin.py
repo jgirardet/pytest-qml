@@ -90,9 +90,9 @@ class QMLFile(pytest.File):
         engine.setImportPathList([str(Path(__file__).parent)] + engine.importPathList())
         self.qmlbot = QmlBot(self.view, settings={"whenTimeout":2000})
         self.view.rootContext().setContextProperty("qmlbot", self.qmlbot)
-        self.view.setFramePosition(QPoint(50, 50));
-        if self.view.size().isEmpty():# { // Avoid hangs with empty windows.
-            self.view.resize(200, 200)
+        # self.view.setFramePosition(QPoint(50, 50));
+        # if self.view.size().isEmpty():# { // Avoid hangs with empty windows.
+        #     self.view.resize(200, 200)
         self.view.exposeEvent = lambda ev: self.qmlbot.windowShownChanged.emit()
         # self._set_context_properties(self.view)
         return self.view
@@ -109,23 +109,33 @@ class QMLItem(pytest.Item):
         qmlbot = self.parent.qmlbot
 
         with qmlbot.wait_signal(
-            self.testcase.testCompleted, timeout=10000, raising=True
+                self.testcase.testCompleted, timeout=10000, raising=True
         ) as block:
             self.testcase.setProperty("testToRun", self.testname)
             view.show()
-            # qmlbot.wait(3000)
         res = self.testcase.property("result").toVariant()
         view.hide()
         del view
         del self.parent.view
-        if res:
-            raise PytestQmlError("\n".join((res["type"], res["message"], res["stack"])))
+        self._handle_result(res)
 
     def repr_failure(self, excinfo):
+        print(excinfo)
         return excinfo.value
 
     def reportinfo(self):
         return self.fspath, 0, f"{self.parent.name}: {self.name}"
+
+    def _handle_result(self, result:dict):
+        if not result:
+            return
+        elif "type" in result:
+            if result["type"] == "SkipError":
+                print(f'Skipped: {result["message"]}') # either message is not printed
+                pytest.skip(msg=result["message"])
+
+
+        raise PytestQmlError("\n".join((result["type"], result["message"], result["stack"])))
 
 
 def pytest_addoption(parser):

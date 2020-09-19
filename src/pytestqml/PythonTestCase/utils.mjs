@@ -59,4 +59,14 @@ class CompareError extends PyTestError {
            return res
     }
 }
-export { CompareError, PyTestError };
+
+class SkipError extends PyTestError {
+  constructor(message, extra) {
+        super(message, extra);
+        this.type = "SkipError"
+        this.message = message
+  }
+}
+export { CompareError, PyTestError, SkipError };
+
+

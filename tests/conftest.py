@@ -33,14 +33,14 @@ Item {
 )
 
 @pytest.fixture
-def file1cas1test1(testdir, run=True):
-    def wrapped(fn):
+def file1cas1test1(testdir):
+    def wrapped(fn,  *args, run=True):
         testdir.makefile(
             ".qml",
             tst_BBB=BASE1CAS1TEST.substitute(fn=fn),
         )
         if run:
-            result = testdir.runpytest("-s")
+            result = testdir.runpytest("-s", *args)
         return testdir, result
 
     return wrapped

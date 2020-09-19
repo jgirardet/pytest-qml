@@ -212,3 +212,12 @@ def test_verify_fail(file1cas1test1):
     """)
     r.assert_outcomes(failed=1)
 
+def test_skip(file1cas1test1):
+    t,r = file1cas1test1("""
+    skip("easier than fix !!!")
+    """)
+    r.assert_outcomes(skipped=1)
+
+
+def test_blabla():
+    pytest.skip("pour pas grand cbose en faire")

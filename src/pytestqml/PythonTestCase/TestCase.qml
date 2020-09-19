@@ -52,7 +52,6 @@ Item {
 
         onTestToRunChanged:{
             try {
-           qmlbot.debug(["debug"], qmlbot.settings("whenTimeout"))
             tryCompare(root, "when", true, qmlbot.settings("whenTimeout"))
             } catch(err) {
             result = err.toObj()
@@ -126,11 +125,17 @@ Item {
     }
 
     /*
+        Skip the current test
+
+    */
+    function skip(message="") {
+        throw new U.SkipError(message)
+    }
+
+    /*
         tryCompare
     */
     function tryCompare(obj, prop, value, timeout, msg) {
-//    function tryCompare(obj, prop, value, timeout, msg) {
-        qmlbot.debug(["entree dans trycompare", prop])
         if (arguments.length == 1 || (typeof(prop) != "string" && typeof(prop) != "number")) {
             {
             throw new U.PyTestError("A property name as string or index is required for tryCompare", {"aaa":"azer"})
@@ -153,7 +158,6 @@ Item {
         var i = 0
         while (i < timeout ) {
                     if (qmlbot.compare(obj[prop], value)){
-                        qmlbot.debug(obj)
                         break;
                     }
                     wait(50)
@@ -162,6 +166,9 @@ Item {
         compare(obj[prop], value, `tryCompare: property '${prop}' never got value '${value}'`)
      }
 
+      /*
+        verify that condition is true
+      */
      function verify(condition, message="") {
         compare(condition, true)
      }
