@@ -114,6 +114,7 @@ class QMLItem(pytest.Item):
             self.testcase.setProperty("testToRun", self.testname)
             view.show()
         res = self.testcase.property("result").toVariant()
+        print(res)
         view.hide()
         del view
         del self.parent.view

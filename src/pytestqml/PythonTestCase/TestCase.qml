@@ -82,7 +82,7 @@ Item {
         running=true
         let res= {}
         try {
-//          init()
+          init()
           collected[testName]()
             }
         catch (err){
@@ -116,13 +116,13 @@ Item {
         throw new Error("QtQuickTest::fail")
     }
 
-
     /*
-        Non blocking-UI wait method.
+        init(): executed befrore each tests
     */
-    function wait(ms) {
-        qmlbot.wait(ms)
+    function init() {
+
     }
+
 
     /*
         Skip the current test
@@ -173,6 +173,12 @@ Item {
         compare(condition, true)
      }
 
+    /*
+        Non blocking-UI wait method.
+    */
+    function wait(ms) {
+        qmlbot.wait(ms)
+    }
 
      Component.onCompleted: {
         collectTests()

@@ -219,5 +219,15 @@ def test_skip(file1cas1test1):
     r.assert_outcomes(skipped=1)
 
 
-def test_blabla():
-    pytest.skip("pour pas grand cbose en faire")
+def test_init(gabarit):
+    t, r = gabarit("""
+    TestCase {
+        name: "TestBla"
+        property string hello: "hello"
+        function init () {hello = "bye"}
+        function test_init(){
+            compare(hello, "bye")
+        }
+    }
+    """, "-vv")
+    r.assert_outcomes(passed=1)

@@ -46,14 +46,14 @@ def file1cas1test1(testdir):
     return wrapped
 
 @pytest.fixture
-def gabarit(testdir, run=True):
-    def wrapped(content):
+def gabarit(testdir):
+    def wrapped(content, *args, run=True):
         testdir.makefile(
             ".qml",
             tst_BBB=GABARIT.substitute(content=content),
         )
         if run:
-            result = testdir.runpytest("-s")
+            result = testdir.runpytest("-s", *args)
         return testdir, result
 
     return wrapped
