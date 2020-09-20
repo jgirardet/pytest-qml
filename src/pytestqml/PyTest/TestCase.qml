@@ -54,6 +54,7 @@ Item {
         property var temporaryObjects: []
 
         onTestToRunChanged:{
+            qmlbot.debug('dans test run changed')
             try {
             tryCompare(root, "when", true, qmlbot.settings("whenTimeout"))
             } catch(err) {
@@ -63,8 +64,6 @@ Item {
             return res
 ////
          }
-//        cleanTemporaryObjects()
-//        showOneLineResult(oneTest.testName, (res ? false : true))
 
             runOneTest(testToRun)
         }
@@ -165,6 +164,12 @@ Item {
     */
     function cleanup() {
     }
+
+
+    function mousePress(item, x = item.width / 2, y = item.height / 2, button = Qt.LeftButton, modifiers = Qt.NoModifier, delay = -1) {
+            qmlbot.mousePress(x, y, button, modifiers, delay)
+    }
+
 
     /*
         Skip the current test

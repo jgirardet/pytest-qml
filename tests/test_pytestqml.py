@@ -108,7 +108,6 @@ Item {
 )
 
 
-
 DIVERS = """
 import QtQuick 2.14
 import PyTest 1.0
@@ -229,11 +228,6 @@ def test_collect_1_file_1_Case_1_test_pass_async(testdir):
     result.stdout.fnmatch_lines_random(["*1 passed*"])
 
     assert time2 - time1 == pytest.approx(100, 10)  # 10% of error
-
-
-
-
-
 
 
 # def test_window_who

@@ -28,12 +28,18 @@ for module in COMMON:
     key = module.split(".")[-1]
     vars()[module] = import_module(".".join((qtapi, module)))
 
-QGuiApplication = QtGui.QGuiApplication  # type: PySide2.QtGui.QGuiApplication
-QQuickView = QtQuick.QQuickView  # type: PySide2.QtQuick.QQuickView
+QEventLoop = QtCore.QEventLoop  # type: PySide2.QtCore.QEventLoop
 QObject = QtCore.QObject  # type: PySide2.QtCore.QObject
 QPoint = QtCore.QPoint  # type: PySide2.QtCore.QPoint
+QPointF = QtCore.QPointF  # type: PySide2.QtCore.QPointF
+Qt = QtCore.Qt  # type: PySide2.QtCore.Qt
+
 QColor = QtGui.QColor  # type: PySide2.QtGui.QColor
+QGuiApplication = QtGui.QGuiApplication  # type: PySide2.QtGui.QGuiApplication
+QQuickView = QtQuick.QQuickView  # type: PySide2.QtQuick.QQuickView
+
 QJSValue = QtQml.QJSValue  # type: PySide2.QtQml.QJSValue
+
 if PYSIDE2:
     Property = QtCore.Property
     Slot = QtCore.Slot

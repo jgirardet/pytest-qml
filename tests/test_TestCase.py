@@ -94,30 +94,41 @@ def test_try_compare_timed_out(file1cas1test1):
 
 def test_try_compare_timed_bad_prop(file1cas1test1):
     t, r = file1cas1test1("""tryCompare(testcase, {}, "Pas Bon", 100)""")
-    r.stdout.fnmatch_lines_random(["*1 failed*", "*A property name as string or index is required for tryCompare*"])
+    r.stdout.fnmatch_lines_random(
+        [
+            "*1 failed*",
+            "*A property name as string or index is required for tryCompare*",
+        ]
+    )
 
 
 def test_try_compare_one_arg_missing(file1cas1test1):
     t, r = file1cas1test1("""tryCompare(testcase, "name")""")
-    r.stdout.fnmatch_lines_random(["*1 failed*", "*A value is required for tryCompare*"])
+    r.stdout.fnmatch_lines_random(
+        ["*1 failed*", "*A value is required for tryCompare*"]
+    )
 
 
 def test_try_compare_timeout_not_int(file1cas1test1):
-    t, r = file1cas1test1("""tryCompare(testcase, "name", "Pas Bon", "notinttimerout")""")
+    t, r = file1cas1test1(
+        """tryCompare(testcase, "name", "Pas Bon", "notinttimerout")"""
+    )
     r.stdout.fnmatch_lines_random(["*1 failed*", "*timeout should be a number*"])
 
+
 def test_try_compare_works_already_set(file1cas1test1):
-    t, r = file1cas1test1("""
+    t, r = file1cas1test1(
+        """
     windowShown=true
     tryCompare(testcase, "name", "TestBla",10)
-    """)
+    """
+    )
     r.assert_outcomes(passed=1)
 
 
-
-
 def test_try_compare_works_after_timer(gabarit):
-    t, r = gabarit("""
+    t, r = gabarit(
+        """
     TestCase{
         id: testcase
         name: "TestTryCompare"
@@ -137,44 +148,54 @@ def test_try_compare_works_after_timer(gabarit):
             tryCompare(testcase, "rien", "bbbb", 400)
         }
     }
-    """)
+    """
+    )
     r.assert_outcomes(passed=1)
 
 
 def test_try_window_shown_at_start_is_true_after_waining(file1cas1test1):
-    t, r = file1cas1test1("""
+    t, r = file1cas1test1(
+        """
     windowShown=true
     tryCompare(testcase, "windowShown", true,10)
 
-    """)
+    """
+    )
     r.assert_outcomes(passed=1)
 
 
 def test_try_window_shown_at_start_is_true_without_waiting(file1cas1test1):
     """don't know if it's a good thing...."""
-    t, r = file1cas1test1("""
+    t, r = file1cas1test1(
+        """
     windowShown=true
     compare(testcase.windowShown, true)
-    """)
+    """
+    )
     r.assert_outcomes(passed=1)
 
 
 def test_when_fail(gabarit):
-    t, r = gabarit("""
+    t, r = gabarit(
+        """
     TestCase {
         name: "TestWhen"
         function test_when_fail() {
         }
         when: false
         Component.onCompleted: qmlbot.setSettings("whenTimeout", 100)
-    }""")
+    }"""
+    )
     r.assert_outcomes(failed=1)
     r.stdout.fnmatch_lines_random(["*property 'when' never got value 'true'*"])
 
+
 #
 
+
 def test_when_wait_and_pass(gabarit):
-    t, r = gabarit("""
+    t, r = gabarit(
+        """
     TestCase{
         id: testcase
         name: "TestTryCompare"
@@ -195,32 +216,41 @@ def test_when_wait_and_pass(gabarit):
         }
         Component.onCompleted: timer.start()
     }
-    """)
+    """
+    )
     r.assert_outcomes(passed=1)
 
 
 def test_verify_pass(file1cas1test1):
-    t, r = file1cas1test1("""
+    t, r = file1cas1test1(
+        """
     verify(true)
-    """)
+    """
+    )
     r.assert_outcomes(passed=1)
 
 
 def test_verify_fail(file1cas1test1):
-    t, r = file1cas1test1("""
+    t, r = file1cas1test1(
+        """
     verify(false)
-    """)
+    """
+    )
     r.assert_outcomes(failed=1)
 
+
 def test_skip(file1cas1test1):
-    t,r = file1cas1test1("""
+    t, r = file1cas1test1(
+        """
     skip("easier than fix !!!")
-    """)
+    """
+    )
     r.assert_outcomes(skipped=1)
 
 
 def test_init(gabarit):
-    t, r = gabarit("""
+    t, r = gabarit(
+        """
     TestCase {
         name: "TestBla"
         property string hello: "hello"
@@ -229,11 +259,15 @@ def test_init(gabarit):
             compare(hello, "bye")
         }
     }
-    """, "-vv")
+    """,
+        "-vv",
+    )
     r.assert_outcomes(passed=1)
 
+
 def test_cleanup(gabarit):
-    t, r = gabarit("""
+    t, r = gabarit(
+        """
     TestCase {
         name: "TestBla"
         property string hello: "hello"
@@ -241,19 +275,44 @@ def test_cleanup(gabarit):
         function test_init(){
         }
     }
-    """)
+    """
+    )
     r.assert_outcomes(failed=1)
     r.stdout.fnmatch_lines_random(["*just to see if cleanup called*"])
 
 
 def test_createTemporaryObjects(file1cas1test1):
-    t,r = file1cas1test1("""
+    t, r = file1cas1test1(
+        """
     var comp = Qt.createComponent("Rec.qml")
     var obj = createTemporaryObject(comp, parent, {"height":3});
     compare(obj.height, 3)  
     compare(obj.width, 99)  
-    """, run=False)
+    """,
+        run=False,
+    )
     t.makefile(".qml", Rec="""import QtQuick 2.0; Item {height: 66; width:99}""")
     r = t.runpytest("-s")
     r.assert_outcomes(passed=1)
 
+
+def test_mousePress(gabarit):
+    t, r = gabarit(
+        """
+    Button {
+        id: button
+        text: "press"
+        onPressed: text = "pressed"
+    }
+    TestCase {
+        name: "TestMouse"
+        when: windowShown
+        function test_mousePress(){
+            mousePress(button)
+            compare(button.text, "pressed")
+        }
+    }
+    """,
+        "-vv",
+    )
+    r.assert_outcomes(passed=1)

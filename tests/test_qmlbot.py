@@ -15,10 +15,11 @@ def test_init(bot):
     assert isinstance(bot, (QmlBot, QObject))
 
 
-def test_wait_signal(bot:QmlBot, qtbot):
+def test_wait_signal(bot: QmlBot, qtbot):
     class Some(QObject):
         asig = Signal()
-    s=Some()
+
+    s = Some()
 
     # error
     with pytest.raises(TimeoutError):
@@ -26,52 +27,56 @@ def test_wait_signal(bot:QmlBot, qtbot):
             pass
 
     # error no raise
-    d1=time()
+    d1 = time()
     with bot.wait_signal(s.asig, timeout=200, raising=False):
-        a=1
-    d2=time()
-    delta = (d2-d1)*1000
+        a = 1
+    d2 = time()
+    delta = (d2 - d1) * 1000
     assert pytest.approx(200, delta, 20)
-
 
     # pass
     with bot.wait_signal(s.asig, timeout=20, raising=True):
         s.asig.emit()
 
+
 """
 Test des Slots
 """
 
+
 def test_debug(bot, capsys):
     bot.debug(1)
-    assert capsys.readouterr().out == "1"+"\n"
+    assert capsys.readouterr().out == "1" + "\n"
     bot.debug("1")
-    assert capsys.readouterr().out == "1"+"\n"
+    assert capsys.readouterr().out == "1" + "\n"
 
     v = QQuickView()
     value = v.engine().newArray(3)
-    value.setProperty(0,1)
-    value.setProperty(1,2)
-    value.setProperty(2,3)
+    value.setProperty(0, 1)
+    value.setProperty(1, 2)
+    value.setProperty(2, 3)
     bot.debug(value)
-    assert capsys.readouterr().out == "[1, 2, 3]"+"\n"
+    assert capsys.readouterr().out == "[1, 2, 3]" + "\n"
 
     v = QQuickView()
     value = v.engine().newObject()
-    value.setProperty("aa","aaa")
-    value.setProperty("bb","bbb")
+    value.setProperty("aa", "aaa")
+    value.setProperty("bb", "bbb")
     bot.debug(value)
-    assert capsys.readouterr().out == "{'aa': 'aaa', 'bb': 'bbb'}"+"\n"
+    assert capsys.readouterr().out == "{'aa': 'aaa', 'bb': 'bbb'}" + "\n"
+
 
 def test_wait(bot):
     d1 = time()
     bot.wait(100)
     d2 = time()
-    delta = (d2-d1)*1000
-    assert delta == pytest.approx(00, 10)
+    delta = (d2 - d1) * 1000
+    assert delta == pytest.approx(100, 10)
+
 
 def test_compare():
-    pass # tested in test_TestCase.py
+    pass  # tested in test_TestCase.py
+
 
 def test_windowShown(bot: QmlBot, qtbot):
     assert not bot.windowShown
@@ -82,6 +87,6 @@ def test_windowShown(bot: QmlBot, qtbot):
 
 def test_settings(bot: QmlBot):
     assert bot._settings == {}
-    bot._settings = {"string":"2", "int":2}
+    bot._settings = {"string": "2", "int": 2}
     assert bot.settings("string") == "2"
     assert bot.settings("int") == 2

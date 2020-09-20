@@ -1,6 +1,18 @@
 from typing import Any
 
-from pytestqml.qt import QObject, Slot, QtCore, QtGui, QJSValue, Signal, Property
+from PySide2.QtTest import QTest
+from pytestqml.qt import (
+    QObject,
+    Slot,
+    QtCore,
+    QtGui,
+    QJSValue,
+    Signal,
+    Property,
+    QPointF,
+    Qt,
+    QPoint,
+)
 from pytestqt.qtbot import QtBot
 from pytestqt.wait_signal import MultiSignalBlocker
 
@@ -12,6 +24,7 @@ class QmlBot(QObject):
     settings: dict
 
     """
+
     def __init__(self, view, settings={}):
         super().__init__()
         self.view = view
@@ -33,20 +46,19 @@ class QmlBot(QObject):
             check_params_cb=check_params_cb,
         )
 
-
     """
     Slots are used in PyTest. they should not be called directly but via a method of PyTest.qml
     
     """
 
     @Slot("QVariant")
-    def debug(self, value:Any):
+    def debug(self, value: Any):
         if isinstance(value, QJSValue):
             value = value.toVariant()
         print(value)
 
     @Slot("QVariant", "QVariant", result=bool)
-    def compare(self, lhs:Any, rhs:Any) -> bool:
+    def compare(self, lhs: Any, rhs: Any) -> bool:
         """
         Used in TestCase.compare.
         It assumes lhs, rhs are of the same type.
@@ -58,11 +70,17 @@ class QmlBot(QObject):
             rhs = rhs.toVariant()
         return lhs == rhs
 
+    @Slot(float, float, int, int, int)
+    def mousePress(self, x: float, y: float, button: int, modifiers: int, delay: float):
+        # window = self.view.engine().rootObjects()[0]
+        print("mouseprese")
+        QTest.mousePress(self.view, Qt.LeftButton, Qt.NoModifier, QPoint(8, 11), 0)
+
     windowShownChanged = Signal()
+
     @Property(bool, notify=windowShownChanged)
     def windowShown(self) -> bool:
         return self.view.isExposed()
-
 
     @Slot(int)
     def wait(self, ms: int) -> None:
@@ -72,11 +90,11 @@ class QmlBot(QObject):
         QtBot.wait(self, ms)
 
     @Slot(str, result=int)
-    def settings(self, key: str, value:Any=None):
+    def settings(self, key: str, value: Any = None):
         return self._settings[key]
 
     @Slot(str, "QVariant")
-    def setSettings(self, key: str, value:Any):
+    def setSettings(self, key: str, value: Any):
         if isinstance(value, QJSValue):
             value = value.toVariant()
         self._settings[key] = value
@@ -84,3 +102,7 @@ class QmlBot(QObject):
     """
     Private api
     """
+
+    # def _event_handler(self):
+    #     window = self.engine.rootObjects()[0]
+    #     QTest.mousePress(window, Qt.LeftButton, Qt.NoModifier, QPoint(20, 10), 0)

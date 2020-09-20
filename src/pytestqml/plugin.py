@@ -8,8 +8,63 @@ from pytestqml.exceptions import PytestQmlError
 from pytestqml.qmlbot import QmlBot
 
 import pytest
-from pytestqml.qt import QGuiApplication, Slot, QtCore, QQuickView, QtTest, QPoint
-from pytestqt.wait_signal import MultiSignalBlocker, SignalBlocker
+from pytestqml.qt import (
+    QGuiApplication,
+    QtCore,
+    QQuickView,
+    QPoint,
+    Qt,
+    Signal,
+)
+
+
+class TestView(QQuickView):
+
+    isExposedEvent = Signal()
+
+    def __init__(self, source, *args):
+        self.app = QGuiApplication.instance() or QGuiApplication([])
+        super().__init__(*args)
+
+        self.qmlbot = QmlBot(self, settings={"whenTimeout": 2000})
+        self.isExposedEvent.connect(self.qmlbot.windowShownChanged)
+
+        engine = self.engine()
+        engine.setImportPathList([str(Path(__file__).parent)] + engine.importPathList())
+        self.rootContext().setContextProperty("qmlbot", self.qmlbot)
+
+        # same as QtTest, don't no if it's needed
+        self.setFlags(
+            Qt.Window
+            | Qt.WindowSystemMenuHint
+            | Qt.WindowTitleHint
+            | Qt.WindowMinMaxButtonsHint
+            | Qt.WindowCloseButtonHint
+        )
+
+        self.setSource(source)
+
+    def exposeEvent(self, ev):
+        super().exposeEvent(ev)
+        self.isExposedEvent.emit()
+
+    # def mousePressEvent(self, ev):
+    #     print("\n")
+    #     print(ev.globalPos(), ev.localPos(), ev.windowPos(),  ev.button(), ev.modifiers())
+    #
+    #     super().mousePressEvent(ev)
+
+    def setSource(self, source):
+        super().setSource(source)
+
+        # Fail if there is some error in source
+        if self.status() != QQuickView.Ready:
+            pytest.fail("\n".join((err.toString() for err in self.errors())))
+
+        # Avoid hangs with empty windows. don't know if needed, its in QtTest
+        self.setFramePosition(QPoint(50, 50))
+        if self.size().isEmpty():
+            self.resize(200, 200)
 
 
 def pytest_addhooks(pluginmanager):
@@ -52,21 +107,20 @@ class QMLFile(pytest.File):
     def __init__(self, fspath, parent):  # , context_properties={}):
         super().__init__(fspath, parent)  # , config, session, nodeid)
         # self.context_properties = context_properties
+        self.source = QtCore.QUrl.fromLocalFile(self.name)
 
     def collect(self):
         if self.config.getoption("skip-qml"):
             return []
-        self._setup_view()  # app should exists has long has collect()
 
-        # add tst_file.qml to the view, fail test if errors
-        self.view.setSource(QtCore.QUrl.fromLocalFile(self.name))
-        if self.view.status() != QQuickView.Ready:
-            pytest.fail("\n".join((err.toString() for err in self.view.errors())))
+        self.view = TestView(self.source)  # app should exists has long has collect()
 
         # iter over all children of tst_file.qml root.
         # TestCases are selected if they a name starting with "Test"
         for testcase in self.view.rootObject().children():
             testCaseName = testcase.property("name")
+
+            # each TestCase has to have a `name` property starting with `Test`
             if testCaseName and testCaseName.startswith("Test"):
                 testcase.name = testCaseName
                 collected_js = testcase.property("collected")
@@ -77,25 +131,9 @@ class QMLFile(pytest.File):
                             self, name=testname, testcase=testcase
                         )
 
-        # del view # delete view before app
-
     def _set_context_properties(self, view: QQuickView):
         for k, v in self.context_properties.items():
             view.rootContext().setContextProperty(k, v)
-
-    def _setup_view(self) -> Tuple[QGuiApplication, QQuickView]:
-        self.app = QGuiApplication.instance() or QGuiApplication([])
-        self.view = QQuickView()  # doit exister apres collect()
-        engine = self.view.engine()
-        engine.setImportPathList([str(Path(__file__).parent)] + engine.importPathList())
-        self.qmlbot = QmlBot(self.view, settings={"whenTimeout":2000})
-        self.view.rootContext().setContextProperty("qmlbot", self.qmlbot)
-        # self.view.setFramePosition(QPoint(50, 50));
-        # if self.view.size().isEmpty():# { // Avoid hangs with empty windows.
-        #     self.view.resize(200, 200)
-        self.view.exposeEvent = lambda ev: self.qmlbot.windowShownChanged.emit()
-        # self._set_context_properties(self.view)
-        return self.view
 
 
 class QMLItem(pytest.Item):
@@ -106,16 +144,19 @@ class QMLItem(pytest.Item):
 
     def runtest(self):
         view = self.parent.view
-        qmlbot = self.parent.qmlbot
+        view.setTitle(self.name)
 
-        with qmlbot.wait_signal(
-                self.testcase.testCompleted, timeout=10000, raising=True,
-        ) as block:
-            self.testcase.setProperty("testToRun", self.testname)
+        # execute the test_function
+        with view.qmlbot.wait_signal(
+            self.testcase.testCompleted,
+            timeout=10000,
+            raising=True,
+        ):
             view.show()
+            self.testcase.setProperty("testToRun", self.testname)
+
+        # Process result
         res = self.testcase.property("result").toVariant()
-        print(res)
-        view.hide()
         del view
         del self.parent.view
         self._handle_result(res)
@@ -127,16 +168,17 @@ class QMLItem(pytest.Item):
     def reportinfo(self):
         return self.fspath, 0, f"{self.parent.name}: {self.name}"
 
-    def _handle_result(self, result:dict):
+    def _handle_result(self, result: dict):
         if not result:
             return
         elif "type" in result:
             if result["type"] == "SkipError":
-                print(f'Skipped: {result["message"]}') # either message is not printed
+                print(f'Skipped: {result["message"]}')  # either message is not printed
                 pytest.skip(msg=result["message"])
 
-
-        raise PytestQmlError("\n".join((result["type"], result["message"], result["stack"])))
+        raise PytestQmlError(
+            "\n".join((result["type"], result["message"], result["stack"]))
+        )
 
 
 def pytest_addoption(parser):

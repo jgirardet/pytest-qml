@@ -5,12 +5,14 @@ import pytest
 pytest_plugins = "pytester"
 
 
-
 BASE1CAS1TEST = Template(
     """
 import QtQuick 2.14
+import QtQuick.Controls 2.14
 import PyTest 1.0
 Item {
+    height: 300
+    width: 300
     TestCase {
         id: testcase
         name: "TestBla"
@@ -25,16 +27,20 @@ Item {
 GABARIT = Template(
     """
 import QtQuick 2.14
+import QtQuick.Controls 2.14
 import PyTest 1.0
 Item {
+    height: 300
+    width: 300
     ${content}
 }
 """
 )
 
+
 @pytest.fixture
 def file1cas1test1(testdir):
-    def wrapped(fn,  *args, run=True):
+    def wrapped(fn, *args, run=True):
         result = None
         testdir.makefile(
             ".qml",
@@ -45,6 +51,7 @@ def file1cas1test1(testdir):
         return testdir, result
 
     return wrapped
+
 
 @pytest.fixture
 def gabarit(testdir):
