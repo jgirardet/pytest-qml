@@ -65,15 +65,10 @@ def test_debug(bot, capsys):
 
 def test_wait(bot):
     d1 = time()
-    bot.wait(0)
-    d2 = time()
-    delta = (d2-d1)*1000
-    assert delta < 0.1
-    d1 = time()
     bot.wait(100)
     d2 = time()
     delta = (d2-d1)*1000
-    assert delta == pytest.approx(100, 10)
+    assert delta == pytest.approx(00, 10)
 
 def test_compare():
     pass # tested in test_TestCase.py
