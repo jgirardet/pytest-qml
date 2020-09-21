@@ -4,3 +4,4 @@ pytest-qt
 pytest
 pdbpp
 tox
+pre-commit
