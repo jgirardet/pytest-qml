@@ -1,20 +1,18 @@
 from typing import Any
 
-from PySide2.QtTest import QTest
 from pytestqml.qt import (
     QObject,
     Slot,
-    QtCore,
-    QtGui,
     QJSValue,
     Signal,
     Property,
-    QPointF,
     Qt,
     QPoint,
+    QTest
 )
 from pytestqt.qtbot import QtBot
-from pytestqt.wait_signal import MultiSignalBlocker
+
+
 
 
 class QmlBot(QObject):
@@ -25,7 +23,7 @@ class QmlBot(QObject):
 
     """
 
-    def __init__(self, view, settings={}):
+    def __init__(self, view : "TestView", settings={}):
         super().__init__()
         self.view = view
         self._settings = settings
@@ -70,11 +68,17 @@ class QmlBot(QObject):
             rhs = rhs.toVariant()
         return lhs == rhs
 
-    @Slot(float, float, int, int, int)
-    def mousePress(self, x: float, y: float, button: int, modifiers: int, delay: float):
-        # window = self.view.engine().rootObjects()[0]
-        print("mouseprese")
-        QTest.mousePress(self.view, Qt.LeftButton, Qt.NoModifier, QPoint(8, 11), 0)
+
+
+    @Slot(str, QPoint,  int, int, int)
+    def mouseEvent(self,action:str, point: QPoint, button: int, modifiers: int, delay: int ):
+        if action == "mouseMove":
+            QTest.mouseMove( self.view, point, delay)
+        else:
+            # Conversion needed for pyqt5/pyside2 compat
+            modifiers = Qt.KeyboardModifier(modifiers)
+            button = Qt.MouseButton(button)
+            getattr(QTest, action)( self.view, button, modifiers, point, delay)
 
     windowShownChanged = Signal()
 

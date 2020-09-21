@@ -1,9 +1,5 @@
 from pathlib import Path
-from time import sleep
-from typing import List, Tuple
 
-from _pytest.config import Config
-from _pytest.config.argparsing import Parser
 from pytestqml.exceptions import PytestQmlError
 from pytestqml.qmlbot import QmlBot
 
@@ -14,7 +10,7 @@ from pytestqml.qt import (
     QQuickView,
     QPoint,
     Qt,
-    Signal,
+    Signal,  QTest,
 )
 
 
@@ -53,6 +49,10 @@ class TestView(QQuickView):
     #     print(ev.globalPos(), ev.localPos(), ev.windowPos(),  ev.button(), ev.modifiers())
     #
     #     super().mousePressEvent(ev)
+
+    # def releaseAllbuttons(self):
+    #     buttons = Qt.LeftButton
+
 
     def setSource(self, source):
         super().setSource(source)
@@ -144,25 +144,25 @@ class QMLItem(pytest.Item):
 
     def runtest(self):
         view = self.parent.view
+        # relase all buttons, between tests
+        QTest.mouseRelease(view, Qt.AllButtons,Qt.NoModifier,QPoint(-1,-1), -1)
         view.setTitle(self.name)
 
         # execute the test_function
         with view.qmlbot.wait_signal(
-            self.testcase.testCompleted,
-            timeout=10000,
-            raising=True,
+                self.testcase.testCompleted,
+                timeout=10000,
+                raising=True,
         ):
             view.show()
             self.testcase.setProperty("testToRun", self.testname)
 
         # Process result
+        view.close()
         res = self.testcase.property("result").toVariant()
-        del view
-        del self.parent.view
         self._handle_result(res)
 
     def repr_failure(self, excinfo):
-        print(excinfo)
         return excinfo.value
 
     def reportinfo(self):

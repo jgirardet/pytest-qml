@@ -29,5 +29,6 @@ def test_qt_api():
     assert qt.QQuickView
     assert qt.QObject
     assert qt.QtTest.QTest
+    assert qt.QTest
     assert qt.QColor.rgba
     assert qt.QJSValue.toVariant

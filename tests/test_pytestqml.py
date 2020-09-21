@@ -210,7 +210,7 @@ def test_collect_2_file_3_Case_6_test(testdir):
 def test_collect_1_file_1_Case_1_test_pass(testdir):
     testdir.makefile(".qml", tst_BBB=ITEM_1Case_1Test_pass)
     result = testdir.runpytest("-s")
-    result.stdout.fnmatch_lines_random(["*1 passed*"])
+    result.assert_outcomes(passed=1)
 
 
 def test_collect_1_file_1_Case_1_test_pass_async(testdir):

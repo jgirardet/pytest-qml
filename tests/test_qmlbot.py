@@ -90,3 +90,7 @@ def test_settings(bot: QmlBot):
     bot._settings = {"string": "2", "int": 2}
     assert bot.settings("string") == "2"
     assert bot.settings("int") == 2
+
+
+def test_mouseEvent():
+    pass  # tested in test_TestCase.py

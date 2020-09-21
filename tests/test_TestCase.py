@@ -14,7 +14,7 @@ Item {
     }
     TestCase {
         name: "TestBla"
-        property date date1: new Date(2018, 8, 22) 
+        property date date1: new Date(2018, 8, 22)
         property date date2: new Date(2018, 8, 21)
         property color color1: "red"
         property color color2: "blue"
@@ -29,7 +29,7 @@ Item {
         function test_compare() {
             compare(${lhs},${rhs})
         }
-        
+
     }
 }
 """
@@ -140,7 +140,7 @@ def test_try_compare_works_after_timer(gabarit):
              running: false
              onTriggered: {
              testcase.rien = "bbbb"
-             
+
              }
           }
         function test_blafefzefez() {
@@ -212,7 +212,7 @@ def test_when_wait_and_pass(gabarit):
           }
         when: rien
         function test_blafefzefez() {
-            
+
         }
         Component.onCompleted: timer.start()
     }
@@ -286,8 +286,8 @@ def test_createTemporaryObjects(file1cas1test1):
         """
     var comp = Qt.createComponent("Rec.qml")
     var obj = createTemporaryObject(comp, parent, {"height":3});
-    compare(obj.height, 3)  
-    compare(obj.width, 99)  
+    compare(obj.height, 3)
+    compare(obj.width, 99)
     """,
         run=False,
     )
@@ -296,23 +296,88 @@ def test_createTemporaryObjects(file1cas1test1):
     r.assert_outcomes(passed=1)
 
 
-def test_mousePress(gabarit):
-    t, r = gabarit(
-        """
-    Button {
-        id: button
-        text: "press"
-        onPressed: text = "pressed"
-    }
+#
+# def test_mouse(gabarit):
+@pytest.mark.parametrize("action, mx, my, button, modifier, res",[
+    ("mousePress", "0", "0", "Qt.LeftButton", "Qt.NoModifier", '"left"'),
+    ("mousePress", "0", "0", "Qt.LeftButton",  "Qt.NoModifier",'"left"'),
+    ("mousePress", "2", "2", "Qt.LeftButton", "Qt.NoModifier",'""'),
+    ("mousePress", "0", "0", "Qt.RightButton", "Qt.NoModifier", '"right"'),
+    ("mousePress", "0", "0", "Qt.RightButton",  "Qt.NoModifier",'"right"'), # double to check release button
+    ("mousePress", "0", "0", "Qt.LeftButton",  "Qt.ControlModifier",'"ctrlleft"'),
+    ("mouseClick", "0", "0", "Qt.LeftButton",  "Qt.NoModifier",'"leftR"'),
+    ("mouseDoubleClickSequence", "0", "0", "Qt.LeftButton",  "Qt.NoModifier",'"leftRleftR"'),
+    # ("mousePress", "2", "2", "Qt.LeftButton", '""'),
+])
+def test_mouse(gabarit,action, mx, my, button,modifier, res):
+    content =  Template("""
     TestCase {
         name: "TestMouse"
         when: windowShown
-        function test_mousePress(){
-            mousePress(button)
-            compare(button.text, "pressed")
+        function test_mouse(){
+            button.text = ""
+            ${action}(mousearea, ${mx},${my}, ${button},${modifier})
+            compare(button.text,${res})
         }
     }
-    """,
-        "-vv",
-    )
+    Button {id:button; x:0 ;y:0 ;height:5; width:5; text:""}
+    MouseArea {
+        x: 10; y: 10; height: 1; width: 1
+        id: mousearea
+        acceptedButtons: Qt.AllButtons
+        onPressed: {
+            if (mouse.button == Qt.LeftButton) {
+                if (mouse.modifiers & Qt.ControlModifier) {
+
+                button.text=button.text +"ctrl"
+                }
+                button.text=button.text +"left"
+            } else if (mouse.button == Qt.RightButton) {
+                button.text = button.text + "right"
+            } else {
+                button.text = button.text + "other"
+                }
+        }
+        onReleased: {
+            button.text = button.text + "R"
+        }
+    }
+    """)
+    t, r = gabarit(content.substitute(action=action, mx=mx, my=my, button=button, modifier=modifier,res=res), '-vv')
+    r.assert_outcomes(passed=1)
+
+def test_mouse_release(gabarit):
+    t,r = gabarit("""
+    Button {
+        id: button
+    }
+    TestCase {
+        name: "TestBla"
+        function test_release() {
+            mousePress(button)
+            compare(button.pressed, true)
+            mouseRelease(button)
+            compare(button.pressed, false)
+        }
+    }
+    """)
+    r.assert_outcomes(passed=1)
+
+def test_mouse_move(gabarit):
+    t,r = gabarit("""
+    MouseArea {
+        id: area
+        hoverEnabled: true
+        height: 100
+        width: 100
+    }
+    TestCase {
+        name: "TestBla"
+        function test_move() {
+            mouseMove(area, 62, 70)
+            compare(area.mouseX, 62)
+            compare(area.mouseY, 70)
+        }
+    }
+    """)
     r.assert_outcomes(passed=1)

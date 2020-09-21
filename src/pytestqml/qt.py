@@ -40,6 +40,8 @@ QQuickView = QtQuick.QQuickView  # type: PySide2.QtQuick.QQuickView
 
 QJSValue = QtQml.QJSValue  # type: PySide2.QtQml.QJSValue
 
+QTest = QtTest.QTest  # type: PySide2.QtTest.QTest
+
 if PYSIDE2:
     Property = QtCore.Property
     Slot = QtCore.Slot

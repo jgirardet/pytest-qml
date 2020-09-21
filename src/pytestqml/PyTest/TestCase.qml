@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import "utils.mjs" as U
+import QtQuick.Window 2.2
 
 Item {
         id: root
@@ -54,7 +55,6 @@ Item {
         property var temporaryObjects: []
 
         onTestToRunChanged:{
-            qmlbot.debug('dans test run changed')
             try {
             tryCompare(root, "when", true, qmlbot.settings("whenTimeout"))
             } catch(err) {
@@ -165,9 +165,44 @@ Item {
     function cleanup() {
     }
 
+    /*
+        mouseClick
+    */
+    function mouseClick(item, x = item.width / 2, y = item.height / 2, button = Qt.LeftButton, modifiers = Qt.NoModifier, delay = -1) {
+            let point = item.mapToItem(Window.contentItem, x, y)
+            qmlbot.mouseEvent("mouseClick", point, button, modifiers, delay)
+    }
+    /*
+        mouseDoubleClickSequence
+    */
+    function mouseDoubleClickSequence(item, x = item.width / 2, y = item.height / 2, button = Qt.LeftButton, modifiers = Qt.NoModifier, delay = -1) {
+            let point = item.mapToItem(Window.contentItem, x, y)
+            qmlbot.mouseEvent("mouseDClick", point, button, modifiers, delay)
+    }
 
+    /*
+        mouseMove
+    */
+    function mouseMove(item, x, y, delay=-1) {
+            let point = item.mapToItem(Window.contentItem, x, y)
+            qmlbot.mouseEvent("mouseMove", point, Qt.NoButton, Qt.NoModifier, delay)
+    }
+
+    /*
+        mousePress
+    */
     function mousePress(item, x = item.width / 2, y = item.height / 2, button = Qt.LeftButton, modifiers = Qt.NoModifier, delay = -1) {
-            qmlbot.mousePress(x, y, button, modifiers, delay)
+            let point = item.mapToItem(Window.contentItem, x, y)
+            qmlbot.mouseEvent("mousePress", point, button, modifiers, delay)
+    }
+
+
+    /*
+        mouseRelease
+    */
+    function mouseRelease(item, x = item.width / 2, y = item.height / 2, button = Qt.LeftButton, modifiers = Qt.NoModifier, delay = -1) {
+            let point = item.mapToItem(Window.contentItem, x, y)
+            qmlbot.mouseEvent("mouseRelease", point, button, modifiers, delay)
     }
 
 
