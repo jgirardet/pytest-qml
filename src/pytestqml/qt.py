@@ -16,11 +16,11 @@ else:
 PYSIDE2 = qtapi == "PySide2"
 PYQT5 = qtapi == "PyQt5"
 
-QtCore = None  # type: PySide2.QtCore
-QtGui = None  # type: PySide2.QtGui
-QtQuick = None  # type: PySide2.QtQuick
-QtTest = None  # type: PySide2.QtTest
-QtQml = None  # type: PySide2.QtQml
+QtCore = None
+QtGui = None
+QtQuick = None
+QtTest = None
+QtQml = None
 
 
 COMMON = ["QtCore", "QtGui", "QtQuick", "QtTest", "QtQml"]
@@ -28,19 +28,20 @@ for module in COMMON:
     key = module.split(".")[-1]
     vars()[module] = import_module(".".join((qtapi, module)))
 
-QEventLoop = QtCore.QEventLoop  # type: PySide2.QtCore.QEventLoop
-QObject = QtCore.QObject  # type: PySide2.QtCore.QObject
-QPoint = QtCore.QPoint  # type: PySide2.QtCore.QPoint
-QPointF = QtCore.QPointF  # type: PySide2.QtCore.QPointF
-Qt = QtCore.Qt  # type: PySide2.QtCore.Qt
+QEventLoop = QtCore.QEventLoop
+QObject = QtCore.QObject
+QPoint = QtCore.QPoint
+QPointF = QtCore.QPointF
+Qt = QtCore.Qt
 
-QColor = QtGui.QColor  # type: PySide2.QtGui.QColor
-QGuiApplication = QtGui.QGuiApplication  # type: PySide2.QtGui.QGuiApplication
-QQuickView = QtQuick.QQuickView  # type: PySide2.QtQuick.QQuickView
+QColor = QtGui.QColor
+QGuiApplication = QtGui.QGuiApplication
+QQuickView = QtQuick.QQuickView
 
-QJSValue = QtQml.QJSValue  # type: PySide2.QtQml.QJSValue
+QJSValue = QtQml.QJSValue
+qmlRegisterType = QtQml.qmlRegisterType
 
-QTest = QtTest.QTest  # type: PySide2.QtTest.QTest
+QTest = QtTest.QTest
 
 if PYSIDE2:
     Property = QtCore.Property

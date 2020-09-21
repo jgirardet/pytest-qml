@@ -10,9 +10,15 @@ from pytestqml.qt import (
     QQuickView,
     QPoint,
     Qt,
-    Signal,  QTest,
+    Signal, QTest, QObject, qmlRegisterType, Property,
 )
 
+#
+#
+# class MyObj(QObject):
+#     @Property(str)
+#     def aaa(self):
+#         return "aaa"
 
 class TestView(QQuickView):
 
@@ -20,12 +26,17 @@ class TestView(QQuickView):
 
     def __init__(self, source, ctx_prop, *args):
         self.app = QGuiApplication.instance() or QGuiApplication([])
+
+
         super().__init__(*args)
         self.ctx_prop= ctx_prop
         self.qmlbot = QmlBot(self, settings={"whenTimeout": 2000})
         self.isExposedEvent.connect(self.qmlbot.windowShownChanged)
 
         engine = self.engine()
+        engine.clearComponentCache()
+        # qmlRegisterType(MyObj, "MyType", 1, 0, "MyObj")
+        # print(engine)
         engine.setImportPathList([str(Path(__file__).parent)] + engine.importPathList())
         self.rootContext().setContextProperty("qmlbot", self.qmlbot)
 
@@ -39,6 +50,7 @@ class TestView(QQuickView):
             | Qt.WindowMinMaxButtonsHint
             | Qt.WindowCloseButtonHint
         )
+
 
         self.setSource(source)
 
@@ -87,6 +99,8 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "qmlfile: mark a item as qml testfile")
 
 
+
+
 def collect_any_tst_files(path, parent):
     if path.ext == ".qml" and path.basename.startswith("tst_"):
         return collect_one_tst_file(
@@ -96,13 +110,14 @@ def collect_any_tst_files(path, parent):
 
 
 def collect_one_tst_file(path, parent):
+
     return QMLFile.from_parent(parent, fspath=path)
 
 
 class QMLFile(pytest.File):
     def __init__(self, fspath, parent):
         super().__init__(fspath, parent)
-        self.source = QtCore.QUrl.fromLocalFile(self.name)
+        self.source = QtCore.QUrl.fromLocalFile(fspath.strpath)
 
     def collect(self):
         if self.config.getoption("skip-qml"):

@@ -245,6 +245,35 @@ def test_collect_with_context_propertie(testdir):
     result = testdir.runpytest("-s")
     result.assert_outcomes(passed=1)
 
+@pytest.mark.skip(reason="succeeds alone, but not in the whole test suite without")
+def test_register_new_qml_type(testdir):
+    testdir.makefile(".qml", tst_AAA="""
+    import QtQuick  2.0
+    import PyTest 1.0
+    import MyType 1.0
+    Item {
+        MyObj {id:obj}
+        TestCase {
+            name: "TestType"
+            function test_add_type() 
+            {
+            compare(obj.aaa,"aaa" )
+            }
+        }
+    }
+    """)
+    testdir.makeconftest('''
+    from pytestqml.qt import qmlRegisterType, QObject, Property
+    class MyObj(QObject):
+        @Property(str)
+        def aaa(self):
+            return "aaa"
+    def pytest_configure():
+        qmlRegisterType(MyObj, "MyType", 1, 0, "MyObj")
+    ''')
+    result = testdir.runpytest("-s")
+    result.assert_outcomes(passed=1)
+
 
 #
 # def test_collect_2_qml_files(testdir):

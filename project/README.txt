@@ -1,0 +1,1 @@
+Simple dummy project running outside tests
