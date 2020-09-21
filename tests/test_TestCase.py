@@ -107,13 +107,13 @@ class TestTryCompare:
             ["*1 failed*", "*A value is required for tryCompare*"]
         )
 
-    def test_try_compare_timeout_not_int(self,file1cas1test1):
+    def test_try_compare_timeout_not_int(self, file1cas1test1):
         t, r = file1cas1test1(
             """tryCompare(testcase, "name", "Pas Bon", "notinttimerout")"""
         )
         r.stdout.fnmatch_lines_random(["*1 failed*", "*timeout should be a number*"])
 
-    def test_try_compare_works_already_set(self,file1cas1test1):
+    def test_try_compare_works_already_set(self, file1cas1test1):
         t, r = file1cas1test1(
             """
         windowShown=true
@@ -122,7 +122,7 @@ class TestTryCompare:
         )
         r.assert_outcomes(passed=1)
 
-    def test_try_compare_works_after_timer(self,gabarit):
+    def test_try_compare_works_after_timer(self, gabarit):
         t, r = gabarit(
             """
         TestCase{
@@ -153,7 +153,7 @@ class TestTryVerify:
     def test_try_verify_timed_out(self, file1cas1test1):
         t, r = file1cas1test1("""tryVerify(function(){return false}, 1)""")
         r.assert_outcomes(failed=1)
-        r.stdout.fnmatch_lines_random(['*tryVerify fonction never got true*'])
+        r.stdout.fnmatch_lines_random(["*tryVerify fonction never got true*"])
 
     def test_try_verify_no_function(self, file1cas1test1):
         t, r = file1cas1test1("""tryVerify("bla")""")
@@ -164,12 +164,11 @@ class TestTryVerify:
         )
         r.assert_outcomes(failed=1)
 
-
     def test_try_verify_timeout_not_int(self, file1cas1test1):
-        t, r = file1cas1test1(
-            """tryVerify(function(){return true}, "notAnInt")"""
+        t, r = file1cas1test1("""tryVerify(function(){return true}, "notAnInt")""")
+        r.stdout.fnmatch_lines_random(
+            ["*1 failed*", "*timeout argument must be a number*"]
         )
-        r.stdout.fnmatch_lines_random(["*1 failed*", "*timeout argument must be a number*"])
         r.assert_outcomes(failed=1)
 
     def test_try_compare_works(self, file1cas1test1):

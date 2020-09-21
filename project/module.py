@@ -7,4 +7,3 @@ class Bla(QObject):
     @Property(str, notify=rienChanged)
     def rien(self):
         return "rien"
-
