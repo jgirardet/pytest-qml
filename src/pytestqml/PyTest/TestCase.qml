@@ -248,6 +248,13 @@ Item {
         compare(obj[prop], value, `tryCompare: property '${prop}' never got value '${value}'`)
      }
 
+     /*
+        Fails the current test case if function does not evaluate to true before the specified timeout (in milliseconds) has elapsed
+      */
+     function tryVerify(fn, timeout = 5000, message = "") {
+
+
+     }
       /*
         verify that condition is true
       */
