@@ -3,13 +3,17 @@ import PyTest 1.0
 import ".."
 import MyNewType 1.0
 
+/*
+Ne MODIFIER CE FICHIER QUE PAR LE BAS POUR GARDER LA NUMEROTATION
+*/
+
 Item {
     id: item
     Bla {
         id: bla
     }
     TestCase {
-        name: "TestRienSans2"
+        name: "TestRienSans"
         function test_simple(){
             compare(1,1)
         }
@@ -20,8 +24,6 @@ Item {
         function test_custom_comp(){
             let comp = Qt.createComponent("../Comp.qml")
             let c = createTemporaryObject(comp, item)
-            compare(1,0 )
-
             mouseClick(c)
             compare(c.text, "bla")
         }
@@ -33,6 +35,9 @@ Item {
         }
         function test_custom_type3(){
             compare(bla.rien, "rien")
+        }
+        function test_contest_property() {
+            compare(cp.customSlot(), "customSlot")
         }
     }
 }

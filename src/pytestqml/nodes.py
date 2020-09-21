@@ -13,6 +13,11 @@ from pytestqml.qt import (
     Signal,
     QTest,
 )
+from pytestqml.reporting import (
+    get_error_line_in_stack,
+    pick_error_context,
+    format_stack_trace,
+)
 
 
 class TestView(QQuickView):
@@ -128,7 +133,7 @@ class QMLItem(pytest.Item):
         return excinfo.value
 
     def reportinfo(self):
-        return self.fspath, 0, f"{self.parent.name}: {self.name}"
+        return self.fspath, None, f"{self.parent.name}: {self.name}"
 
     def _handle_result(self, result: dict):
         if not result:
@@ -138,6 +143,19 @@ class QMLItem(pytest.Item):
                 print(f'Skipped: {result["message"]}')  # either message is not printed
                 pytest.skip(msg=result["message"])
 
-        raise PytestQmlError(
-            "\n".join((result["type"], result["message"], result["stack"]))
+        err_msg = self._format_report(result)
+        raise PytestQmlError(err_msg)
+
+    def _format_report(self, result: dict):
+        report = []
+        n = [""]
+        filename = self.parent.source.fileName()
+        source = self.parent.source.toLocalFile()
+        line = get_error_line_in_stack(filename, result["stack"])
+        context = pick_error_context(
+            source, self.testname, line, result["type"], result["message"].strip("\n")
         )
+        # intro = f"""{result["type"]} at line {line}"""
+        stack = format_stack_trace(result["stack"], self.testname)
+        report = n + context + n + stack
+        return "\n".join(report)

@@ -99,7 +99,7 @@ Item {
         temporaryObjects = []
         } catch (cleanupErr) {
             let error = new U.CleanupError(cleanupErr.message, {"other":res})
-            error.stask  = cleanupErr.stack
+            error.stack  = cleanupErr.stack
             res = error.toObj()
             qmlbot.debug(res)
         }

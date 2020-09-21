@@ -28,7 +28,7 @@ setup(
     # py_modules=['pytest_pytestqml'],
     include_package_data=True,
     python_requires=">=3.6",
-    install_requires=["pytest>=6.0.0"],
+    install_requires=["pytest>=6.0.0", "termcolor"],
     classifiers=[
         "Development Status :: 4 - Beta",
         "Framework :: Pytest",

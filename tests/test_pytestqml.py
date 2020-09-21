@@ -35,8 +35,7 @@ Item {
 }
 """
 
-ITEM_1Case_2Test = """
-import QtQuick 2.14
+ITEM_1Case_2Test = """import QtQuick 2.14
 import PyTest 1.0
 Item {
     TestCase {
@@ -282,102 +281,16 @@ def test_register_new_qml_type(testdir):
     result.assert_outcomes(passed=1)
 
 
-#
-# def test_collect_2_qml_files(testdir):
-#     testdir.makefile(".qml", tst_AAA=ITEM_EMPTY)
-#     testdir.makefile(".qml", tst_BBB=ITEM_EMPTY)
-#     result = testdir.runpytest("-s")
-#     result.stdout.fnmatch_lines_random([
-#         "collected 2 items"
-#     ])
-#
-#
-# def test_collect_only_tst_dot_qml_file(testdir):
-#     testdir.makefile(".qml", tst_AAA=ITEM_EMPTY)
-#     testdir.makefile(".py", tst_BBB="")
-#     testdir.makefile(".qm", tst_CCC=ITEM_EMPTY)
-#     result = testdir.runpytest("-s")
-#     result.stdout.fnmatch_lines_random([
-#         "collected 1 item"
-#     ])
-#
-#
-#
-#
-# def test_collect_fail_if_view_setSource_fail(testdir):
-#     testdir.makefile(".qml", tst_AAA="")
-#     result = testdir.runpytest("")
-#     result.stdout.fnmatch_lines_random([
-#         "*tst_AAA.qml: File is empty*",
-#         "*collected 0 items / 1 error*"
-#     ])
-#
-#
-#
-# def test_collect_py_test_and_ts_qml(testdir):
-#     testdir.makefile(".qml", tst_AAA=ITEM_EMPTY)
-#     testdir.makefile(".qml", tst_BBB=ITEM_EMPTY)
-#     testdir.makepyfile(test_bla="""
-# def test_aaa():
-#     assert True
-# """)
-#     result = testdir.runpytest("-s")
-#     result.stdout.fnmatch_lines([
-#         "*collected 3 items*",
-#     ])
-#
-# #
-#
-#
-# def test_collect_skip_qml(testdir):
-#     testdir.makefile(".qml", tst_AAA=ITEM_EMPTY)
-#     testdir.makefile(".qml", tst_BBB=ITEM_EMPTY)
-#     testdir.makeconftest('''
-# from pytestqml.plugin import collect_any_tst_files
-# def  pytest_collect_file(path, parent):
-#     return  collect_any_tst_files(path, parent)
-#     ''')
-#     testdir.makepyfile(test_bla="""
-# def test_aaa():
-#     assert True
-# """)
-#     result = testdir.runpytest("--skip-qml")
-#     result.stdout.fnmatch_lines([
-#         "*collected 1 item*",
-#     ])
-#
-#
-# def test_collect_qmlbot(testdir):
-#     testdir.makefile(".qml", tst_AAA="""
-# import QtQuick 2.14
-# Item {
-#     property string text: ctx.aaa
-#     Component.onCompleted: {
-#         print(qmlbot.debug(text))
-#     }
-# }
-# """)
-#     testdir.makeconftest('''
-# from pytestqml.plugin import collect_any_tst_files
-# from pytestqml.qt import QtCore, Property
-# def  pytest_collect_file(path, parent):
-#     class Ctx(QtCore.QObject):
-#
-#         @Property(str)
-#         def aaa(self):
-#             return "hello, folks !"
-#     ctx = Ctx()
-#     return  collect_any_tst_files(path, parent, context_properties={"ctx":ctx})
-#     ''')
-#     testdir.makepyfile(test_bla="""
-# def test_aaa():
-#     assert True
-# """)
-#     result = testdir.runpytest("-s")
-#     result.stdout.fnmatch_lines([
-#         "*hello, folks !*",
-#     ])
-#
+def test_collect_skip_qml(testdir, file1cas1test1):
+    file1cas1test1("function test_qml(){}")
+    testdir.makepyfile(
+        test_bla="""
+def test_aaa():
+    assert True
+"""
+    )
+    result = testdir.runpytest("--skip-qml")
+    result.assert_outcomes(passed=1)
 
 
 #
