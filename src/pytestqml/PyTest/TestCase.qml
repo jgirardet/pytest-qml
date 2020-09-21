@@ -220,7 +220,7 @@ Item {
     function tryCompare(obj, prop, value, timeout, msg) {
         if (arguments.length == 1 || (typeof(prop) != "string" && typeof(prop) != "number")) {
             {
-            throw new U.PyTestError("A property name as string or index is required for tryCompare", {"aaa":"azer"})
+            throw new U.PyTestError("A property name as string or index is required for tryCompare")
             }
         }
         if (arguments.length == 2) {
@@ -251,10 +251,33 @@ Item {
      /*
         Fails the current test case if function does not evaluate to true before the specified timeout (in milliseconds) has elapsed
       */
-     function tryVerify(fn, timeout = 5000, message = "") {
+     function tryVerify(expressionFunction, timeout, msg) {
+        if (!expressionFunction || !(expressionFunction instanceof Function)) {
+            throw new U.PyTestError("First argument must be a function")
+        }
 
+        if (timeout && typeof(timeout) !== "number") {
+            throw new U.PyTestError("timeout argument must be a number")
+        }
 
-     }
+        if (msg && typeof(msg) !== "string") {
+            throw new U.PyTestError("message argument must be a string")
+        }
+
+        if (!timeout)
+            timeout = 5000
+
+        if (!expressionFunction())
+            wait(0)
+
+        var i = 0
+        while (i < timeout && !expressionFunction()) {
+            wait(50)
+            i += 50
+        }
+        msg = msg ? msg : `tryVerify fonction never got true`
+        compare(expressionFunction(), true, msg)
+    }
       /*
         verify that condition is true
       */

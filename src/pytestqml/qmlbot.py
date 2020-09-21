@@ -1,18 +1,7 @@
 from typing import Any
 
-from pytestqml.qt import (
-    QObject,
-    Slot,
-    QJSValue,
-    Signal,
-    Property,
-    Qt,
-    QPoint,
-    QTest
-)
+from pytestqml.qt import QObject, Slot, QJSValue, Signal, Property, Qt, QPoint, QTest
 from pytestqt.qtbot import QtBot
-
-
 
 
 class QmlBot(QObject):
@@ -23,7 +12,7 @@ class QmlBot(QObject):
 
     """
 
-    def __init__(self, view : "TestView", settings={}):
+    def __init__(self, view: "TestView", settings={}):
         super().__init__()
         self.view = view
         self._settings = settings
@@ -68,17 +57,17 @@ class QmlBot(QObject):
             rhs = rhs.toVariant()
         return lhs == rhs
 
-
-
-    @Slot(str, QPoint,  int, int, int)
-    def mouseEvent(self,action:str, point: QPoint, button: int, modifiers: int, delay: int ):
+    @Slot(str, QPoint, int, int, int)
+    def mouseEvent(
+        self, action: str, point: QPoint, button: int, modifiers: int, delay: int
+    ):
         if action == "mouseMove":
-            QTest.mouseMove( self.view, point, delay)
+            QTest.mouseMove(self.view, point, delay)
         else:
             # Conversion needed for pyqt5/pyside2 compat
             modifiers = Qt.KeyboardModifier(modifiers)
             button = Qt.MouseButton(button)
-            getattr(QTest, action)( self.view, button, modifiers, point, delay)
+            getattr(QTest, action)(self.view, button, modifiers, point, delay)
 
     windowShownChanged = Signal()
 

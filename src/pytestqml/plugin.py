@@ -10,7 +10,11 @@ from pytestqml.qt import (
     QQuickView,
     QPoint,
     Qt,
-    Signal, QTest, QObject, qmlRegisterType, Property,
+    Signal,
+    QTest,
+    QObject,
+    qmlRegisterType,
+    Property,
 )
 
 #
@@ -20,6 +24,7 @@ from pytestqml.qt import (
 #     def aaa(self):
 #         return "aaa"
 
+
 class TestView(QQuickView):
 
     isExposedEvent = Signal()
@@ -27,9 +32,8 @@ class TestView(QQuickView):
     def __init__(self, source, ctx_prop, *args):
         self.app = QGuiApplication.instance() or QGuiApplication([])
 
-
         super().__init__(*args)
-        self.ctx_prop= ctx_prop
+        self.ctx_prop = ctx_prop
         self.qmlbot = QmlBot(self, settings={"whenTimeout": 2000})
         self.isExposedEvent.connect(self.qmlbot.windowShownChanged)
 
@@ -50,7 +54,6 @@ class TestView(QQuickView):
             | Qt.WindowMinMaxButtonsHint
             | Qt.WindowCloseButtonHint
         )
-
 
         self.setSource(source)
 
@@ -99,8 +102,6 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "qmlfile: mark a item as qml testfile")
 
 
-
-
 def collect_any_tst_files(path, parent):
     if path.ext == ".qml" and path.basename.startswith("tst_"):
         return collect_one_tst_file(
@@ -123,7 +124,9 @@ class QMLFile(pytest.File):
         if self.config.getoption("skip-qml"):
             return []
         cp = self.parent.config.hook.pytest_qml_context_properties() or [{}]
-        self.view = TestView(self.source, cp[0])  # app should exists has long has collect()
+        self.view = TestView(
+            self.source, cp[0]
+        )  # app should exists has long has collect()
 
         # iter over all children of tst_file.qml root.
         # TestCases are selected if they a name starting with "Test"
@@ -142,8 +145,6 @@ class QMLFile(pytest.File):
                         )
 
 
-
-
 class QMLItem(pytest.Item):
     def __init__(self, name, parent, testcase):
         super().__init__(testcase.name + "::" + name, parent)
@@ -153,14 +154,14 @@ class QMLItem(pytest.Item):
     def runtest(self):
         view = self.parent.view
         # relase all buttons, between tests
-        QTest.mouseRelease(view, Qt.AllButtons,Qt.NoModifier,QPoint(-1,-1), -1)
+        QTest.mouseRelease(view, Qt.AllButtons, Qt.NoModifier, QPoint(-1, -1), -1)
         view.setTitle(self.name)
 
         # execute the test_function
         with view.qmlbot.wait_signal(
-                self.testcase.testCompleted,
-                timeout=10000,
-                raising=True,
+            self.testcase.testCompleted,
+            timeout=10000,
+            raising=True,
         ):
             view.show()
             self.testcase.setProperty("testToRun", self.testname)

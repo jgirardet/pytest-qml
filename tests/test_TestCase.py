@@ -87,70 +87,124 @@ def test_compare_various_type(testdir, lhs, rhs, res):
         result.stdout.fnmatch_lines_random([f"*CompareError*"])
 
 
-def test_try_compare_timed_out(file1cas1test1):
-    t, r = file1cas1test1("""tryCompare(testcase, "name", "Pas Bon", 100)""")
-    r.stdout.fnmatch_lines_random(["*1 failed*", '*"TestBla" != "Pas Bon"*'])
+class TestTryCompare:
+    def test_try_compare_timed_out(self, file1cas1test1):
+        t, r = file1cas1test1("""tryCompare(testcase, "name", "Pas Bon", 100)""")
+        r.stdout.fnmatch_lines_random(["*1 failed*", '*"TestBla" != "Pas Bon"*'])
 
+    def test_try_compare_timed_bad_prop(self, file1cas1test1):
+        t, r = file1cas1test1("""tryCompare(testcase, {}, "Pas Bon", 100)""")
+        r.stdout.fnmatch_lines_random(
+            [
+                "*1 failed*",
+                "*A property name as string or index is required for tryCompare*",
+            ]
+        )
 
-def test_try_compare_timed_bad_prop(file1cas1test1):
-    t, r = file1cas1test1("""tryCompare(testcase, {}, "Pas Bon", 100)""")
-    r.stdout.fnmatch_lines_random(
-        [
-            "*1 failed*",
-            "*A property name as string or index is required for tryCompare*",
-        ]
-    )
+    def test_try_compare_one_arg_missing(self, file1cas1test1):
+        t, r = file1cas1test1("""tryCompare(testcase, "name")""")
+        r.stdout.fnmatch_lines_random(
+            ["*1 failed*", "*A value is required for tryCompare*"]
+        )
 
+    def test_try_compare_timeout_not_int(self,file1cas1test1):
+        t, r = file1cas1test1(
+            """tryCompare(testcase, "name", "Pas Bon", "notinttimerout")"""
+        )
+        r.stdout.fnmatch_lines_random(["*1 failed*", "*timeout should be a number*"])
 
-def test_try_compare_one_arg_missing(file1cas1test1):
-    t, r = file1cas1test1("""tryCompare(testcase, "name")""")
-    r.stdout.fnmatch_lines_random(
-        ["*1 failed*", "*A value is required for tryCompare*"]
-    )
-
-
-def test_try_compare_timeout_not_int(file1cas1test1):
-    t, r = file1cas1test1(
-        """tryCompare(testcase, "name", "Pas Bon", "notinttimerout")"""
-    )
-    r.stdout.fnmatch_lines_random(["*1 failed*", "*timeout should be a number*"])
-
-
-def test_try_compare_works_already_set(file1cas1test1):
-    t, r = file1cas1test1(
+    def test_try_compare_works_already_set(self,file1cas1test1):
+        t, r = file1cas1test1(
+            """
+        windowShown=true
+        tryCompare(testcase, "name", "TestBla",10)
         """
-    windowShown=true
-    tryCompare(testcase, "name", "TestBla",10)
-    """
-    )
-    r.assert_outcomes(passed=1)
+        )
+        r.assert_outcomes(passed=1)
 
-
-def test_try_compare_works_after_timer(gabarit):
-    t, r = gabarit(
-        """
-    TestCase{
-        id: testcase
-        name: "TestTryCompare"
-        property string rien: "aaaaa"
-        Timer {
-            id: timer
-             interval: 100
-             repeat:false
-             running: false
-             onTriggered: {
-             testcase.rien = "bbbb"
-
-             }
-          }
-        function test_blafefzefez() {
-            timer.start()
-            tryCompare(testcase, "rien", "bbbb", 400)
+    def test_try_compare_works_after_timer(self,gabarit):
+        t, r = gabarit(
+            """
+        TestCase{
+            id: testcase
+            name: "TestTryCompare"
+            property string rien: "aaaaa"
+            Timer {
+                id: timer
+                 interval: 100
+                 repeat:false
+                 running: false
+                 onTriggered: {
+                 testcase.rien = "bbbb"
+    
+                 }
+              }
+            function test_blafefzefez() {
+                timer.start()
+                tryCompare(testcase, "rien", "bbbb", 400)
+            }
         }
-    }
-    """
-    )
-    r.assert_outcomes(passed=1)
+        """
+        )
+        r.assert_outcomes(passed=1)
+
+
+class TestTryVerify:
+    def test_try_verify_timed_out(self, file1cas1test1):
+        t, r = file1cas1test1("""tryVerify(function(){return false}, 1)""")
+        r.assert_outcomes(failed=1)
+        r.stdout.fnmatch_lines_random(['*tryVerify fonction never got true*'])
+
+    def test_try_verify_no_function(self, file1cas1test1):
+        t, r = file1cas1test1("""tryVerify("bla")""")
+        r.stdout.fnmatch_lines_random(
+            [
+                "*First argument must be a function*",
+            ]
+        )
+        r.assert_outcomes(failed=1)
+
+
+    def test_try_verify_timeout_not_int(self, file1cas1test1):
+        t, r = file1cas1test1(
+            """tryVerify(function(){return true}, "notAnInt")"""
+        )
+        r.stdout.fnmatch_lines_random(["*1 failed*", "*timeout argument must be a number*"])
+        r.assert_outcomes(failed=1)
+
+    def test_try_compare_works(self, file1cas1test1):
+        t, r = file1cas1test1(
+            """
+        tryVerify(function(){return true})
+        """
+        )
+        r.assert_outcomes(passed=1)
+
+    def test_try_compare_works_after_timer(self, gabarit):
+        t, r = gabarit(
+            """
+        TestCase{
+            id: testcase
+            name: "TestTryVerify"
+            property string rien: "aaaaa"
+            Timer {
+                id: timer
+                 interval: 100
+                 repeat:false
+                 running: false
+                 onTriggered: {
+                 testcase.rien = "bbbb"
+
+                 }
+              }
+            function test_tryverify_timer() {
+                timer.start()
+                tryVerify(function(){return testcase.rien=="bbbb"}, 400)
+            }
+        }
+        """
+        )
+        r.assert_outcomes(passed=1)
 
 
 def test_try_window_shown_at_start_is_true_after_waining(file1cas1test1):
@@ -298,19 +352,37 @@ def test_createTemporaryObjects(file1cas1test1):
 
 #
 # def test_mouse(gabarit):
-@pytest.mark.parametrize("action, mx, my, button, modifier, res",[
-    ("mousePress", "0", "0", "Qt.LeftButton", "Qt.NoModifier", '"left"'),
-    ("mousePress", "0", "0", "Qt.LeftButton",  "Qt.NoModifier",'"left"'),
-    ("mousePress", "2", "2", "Qt.LeftButton", "Qt.NoModifier",'""'),
-    ("mousePress", "0", "0", "Qt.RightButton", "Qt.NoModifier", '"right"'),
-    ("mousePress", "0", "0", "Qt.RightButton",  "Qt.NoModifier",'"right"'), # double to check release button
-    ("mousePress", "0", "0", "Qt.LeftButton",  "Qt.ControlModifier",'"ctrlleft"'),
-    ("mouseClick", "0", "0", "Qt.LeftButton",  "Qt.NoModifier",'"leftR"'),
-    ("mouseDoubleClickSequence", "0", "0", "Qt.LeftButton",  "Qt.NoModifier",'"leftRleftR"'),
-    # ("mousePress", "2", "2", "Qt.LeftButton", '""'),
-])
-def test_mouse(gabarit,action, mx, my, button,modifier, res):
-    content =  Template("""
+@pytest.mark.parametrize(
+    "action, mx, my, button, modifier, res",
+    [
+        ("mousePress", "0", "0", "Qt.LeftButton", "Qt.NoModifier", '"left"'),
+        ("mousePress", "0", "0", "Qt.LeftButton", "Qt.NoModifier", '"left"'),
+        ("mousePress", "2", "2", "Qt.LeftButton", "Qt.NoModifier", '""'),
+        ("mousePress", "0", "0", "Qt.RightButton", "Qt.NoModifier", '"right"'),
+        (
+            "mousePress",
+            "0",
+            "0",
+            "Qt.RightButton",
+            "Qt.NoModifier",
+            '"right"',
+        ),  # double to check release button
+        ("mousePress", "0", "0", "Qt.LeftButton", "Qt.ControlModifier", '"ctrlleft"'),
+        ("mouseClick", "0", "0", "Qt.LeftButton", "Qt.NoModifier", '"leftR"'),
+        (
+            "mouseDoubleClickSequence",
+            "0",
+            "0",
+            "Qt.LeftButton",
+            "Qt.NoModifier",
+            '"leftRleftR"',
+        ),
+        # ("mousePress", "2", "2", "Qt.LeftButton", '""'),
+    ],
+)
+def test_mouse(gabarit, action, mx, my, button, modifier, res):
+    content = Template(
+        """
     TestCase {
         name: "TestMouse"
         when: windowShown
@@ -342,12 +414,20 @@ def test_mouse(gabarit,action, mx, my, button,modifier, res):
             button.text = button.text + "R"
         }
     }
-    """)
-    t, r = gabarit(content.substitute(action=action, mx=mx, my=my, button=button, modifier=modifier,res=res), '-vv')
+    """
+    )
+    t, r = gabarit(
+        content.substitute(
+            action=action, mx=mx, my=my, button=button, modifier=modifier, res=res
+        ),
+        "-vv",
+    )
     r.assert_outcomes(passed=1)
 
+
 def test_mouse_release(gabarit):
-    t,r = gabarit("""
+    t, r = gabarit(
+        """
     Button {
         id: button
     }
@@ -360,11 +440,14 @@ def test_mouse_release(gabarit):
             compare(button.pressed, false)
         }
     }
-    """)
+    """
+    )
     r.assert_outcomes(passed=1)
 
+
 def test_mouse_move(gabarit):
-    t,r = gabarit("""
+    t, r = gabarit(
+        """
     MouseArea {
         id: area
         hoverEnabled: true
@@ -379,5 +462,6 @@ def test_mouse_move(gabarit):
             compare(area.mouseY, 70)
         }
     }
-    """)
+    """
+    )
     r.assert_outcomes(passed=1)

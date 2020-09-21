@@ -230,10 +230,10 @@ def test_collect_1_file_1_Case_1_test_pass_async(testdir):
     assert time2 - time1 == pytest.approx(100, 10)  # 10% of error
 
 
-
 def test_collect_with_context_propertie(testdir):
     testdir.makefile(".qml", tst_BBB=ITEM_1Case_1Test_cp)
-    testdir.makeconftest('''
+    testdir.makeconftest(
+        """
     from pytestqml.qt import QObject, Property
     class Cp(QObject):
         @Property(str)
@@ -241,13 +241,17 @@ def test_collect_with_context_propertie(testdir):
             return "this is aVar"
     def pytest_qml_context_properties():
         return {"cp":Cp()}
-        ''')
+        """
+    )
     result = testdir.runpytest("-s")
     result.assert_outcomes(passed=1)
 
+
 @pytest.mark.xfail(reason="succeeds alone, but not in the whole test suite without")
 def test_register_new_qml_type(testdir):
-    testdir.makefile(".qml", tst_AAA="""
+    testdir.makefile(
+        ".qml",
+        tst_AAA="""
     import QtQuick  2.0
     import PyTest 1.0
     import MyType 1.0
@@ -261,8 +265,10 @@ def test_register_new_qml_type(testdir):
             }
         }
     }
-    """)
-    testdir.makeconftest('''
+    """,
+    )
+    testdir.makeconftest(
+        """
     from pytestqml.qt import qmlRegisterType, QObject, Property
     class MyObj(QObject):
         @Property(str)
@@ -270,7 +276,8 @@ def test_register_new_qml_type(testdir):
             return "aaa"
     def pytest_configure():
         qmlRegisterType(MyObj, "MyType", 1, 0, "MyObj")
-    ''')
+    """
+    )
     result = testdir.runpytest("-s")
     result.assert_outcomes(passed=1)
 
