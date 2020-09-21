@@ -18,16 +18,18 @@ class TestView(QQuickView):
 
     isExposedEvent = Signal()
 
-    def __init__(self, source, *args):
+    def __init__(self, source, ctx_prop, *args):
         self.app = QGuiApplication.instance() or QGuiApplication([])
         super().__init__(*args)
-
+        self.ctx_prop= ctx_prop
         self.qmlbot = QmlBot(self, settings={"whenTimeout": 2000})
         self.isExposedEvent.connect(self.qmlbot.windowShownChanged)
 
         engine = self.engine()
         engine.setImportPathList([str(Path(__file__).parent)] + engine.importPathList())
         self.rootContext().setContextProperty("qmlbot", self.qmlbot)
+
+        self._set_context_properties()
 
         # same as QtTest, don't no if it's needed
         self.setFlags(
@@ -44,16 +46,6 @@ class TestView(QQuickView):
         super().exposeEvent(ev)
         self.isExposedEvent.emit()
 
-    # def mousePressEvent(self, ev):
-    #     print("\n")
-    #     print(ev.globalPos(), ev.localPos(), ev.windowPos(),  ev.button(), ev.modifiers())
-    #
-    #     super().mousePressEvent(ev)
-
-    # def releaseAllbuttons(self):
-    #     buttons = Qt.LeftButton
-
-
     def setSource(self, source):
         super().setSource(source)
 
@@ -65,6 +57,10 @@ class TestView(QQuickView):
         self.setFramePosition(QPoint(50, 50))
         if self.size().isEmpty():
             self.resize(200, 200)
+
+    def _set_context_properties(self):
+        for k, v in self.ctx_prop.items():
+            self.rootContext().setContextProperty(k, v)
 
 
 def pytest_addhooks(pluginmanager):
@@ -96,24 +92,23 @@ def collect_any_tst_files(path, parent):
         return collect_one_tst_file(
             path,
             parent,
-        )  # context_properties=context_properties)
+        )
 
 
-def collect_one_tst_file(path, parent):  # , context_properties={}):
+def collect_one_tst_file(path, parent):
     return QMLFile.from_parent(parent, fspath=path)
 
 
 class QMLFile(pytest.File):
-    def __init__(self, fspath, parent):  # , context_properties={}):
-        super().__init__(fspath, parent)  # , config, session, nodeid)
-        # self.context_properties = context_properties
+    def __init__(self, fspath, parent):
+        super().__init__(fspath, parent)
         self.source = QtCore.QUrl.fromLocalFile(self.name)
 
     def collect(self):
         if self.config.getoption("skip-qml"):
             return []
-
-        self.view = TestView(self.source)  # app should exists has long has collect()
+        cp = self.parent.config.hook.pytest_qml_context_properties() or [{}]
+        self.view = TestView(self.source, cp[0])  # app should exists has long has collect()
 
         # iter over all children of tst_file.qml root.
         # TestCases are selected if they a name starting with "Test"
@@ -131,9 +126,7 @@ class QMLFile(pytest.File):
                             self, name=testname, testcase=testcase
                         )
 
-    def _set_context_properties(self, view: QQuickView):
-        for k, v in self.context_properties.items():
-            view.rootContext().setContextProperty(k, v)
+
 
 
 class QMLItem(pytest.Item):

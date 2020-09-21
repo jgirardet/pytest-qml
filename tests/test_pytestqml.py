@@ -230,22 +230,20 @@ def test_collect_1_file_1_Case_1_test_pass_async(testdir):
     assert time2 - time1 == pytest.approx(100, 10)  # 10% of error
 
 
-# def test_window_who
 
-# def test_collect_with_context_propertie(testdir):
-#     testdir.makefile(".qml", tst_BBB=ITEM_1Case_1Test_cp)
-#     testdir.makeconftest('''
-#     from pytestqml.qt import QObject, Property
-#     class Cp(QObject):
-#         @Property(str)
-#         def aVar(self):
-#             return "this is aVar"
-#         ''')
-#     # result = testdir.runpytest("--co")
-#     result = testdir.runpytest("-s")
-#     result.stdout.fnmatch_lines_random(
-#         ["1 passed"]
-#     )
+def test_collect_with_context_propertie(testdir):
+    testdir.makefile(".qml", tst_BBB=ITEM_1Case_1Test_cp)
+    testdir.makeconftest('''
+    from pytestqml.qt import QObject, Property
+    class Cp(QObject):
+        @Property(str)
+        def aVar(self):
+            return "this is aVar"
+    def pytest_qml_context_properties():
+        return {"cp":Cp()}
+        ''')
+    result = testdir.runpytest("-s")
+    result.assert_outcomes(passed=1)
 
 
 #
