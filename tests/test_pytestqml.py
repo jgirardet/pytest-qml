@@ -245,7 +245,7 @@ def test_collect_with_context_propertie(testdir):
     result = testdir.runpytest("-s")
     result.assert_outcomes(passed=1)
 
-@pytest.mark.skip(reason="succeeds alone, but not in the whole test suite without")
+@pytest.mark.xfail(reason="succeeds alone, but not in the whole test suite without")
 def test_register_new_qml_type(testdir):
     testdir.makefile(".qml", tst_AAA="""
     import QtQuick  2.0
