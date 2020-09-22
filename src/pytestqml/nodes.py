@@ -72,6 +72,9 @@ class TestView(QQuickView):
         for k, v in self.ctx_prop.items():
             self.rootContext().setContextProperty(k, v)
 
+    # def keyPressEvent(self, e):
+    #     breakpoint()
+
 
 class QMLFile(pytest.File):
     def __init__(self, fspath, parent):
@@ -110,7 +113,7 @@ class QMLItem(pytest.Item):
         self.testcase = testcase
 
     def runtest(self):
-        view = self.parent.view
+        view = self.parent.view  # type: TestView
         # relase all buttons, between tests
         QTest.mouseRelease(view, Qt.AllButtons, Qt.NoModifier, QPoint(-1, -1), -1)
         view.setTitle(self.name)

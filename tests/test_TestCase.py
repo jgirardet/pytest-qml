@@ -349,8 +349,6 @@ def test_createTemporaryObjects(file1cas1test1):
     r.assert_outcomes(passed=1)
 
 
-#
-# def test_mouse(gabarit):
 @pytest.mark.parametrize(
     "action, mx, my, button, modifier, res",
     [
@@ -464,3 +462,59 @@ def test_mouse_move(gabarit):
     """
     )
     r.assert_outcomes(passed=1)
+
+
+@pytest.mark.parametrize(
+    "action, button, modifier, res",
+    [
+        ("keyClick", "Qt.Key_A", "Qt.NoModifier", "ar"),
+        ("keyClick", "Qt.Key_A", "Qt.ControlModifier", "AR"),
+        ("keyPress", "Qt.Key_A", "Qt.NoModifier", "a"),
+        ("keyPress", "Qt.Key_A", "Qt.ControlModifier", "A"),
+        ("keyRelease", "Qt.Key_A", "Qt.ControlModifier", "R"),
+        ("keyRelease", "Qt.Key_A", "Qt.NoModifier", "r"),
+    ],
+)
+def test_keyboard(gabarit, action, button, modifier, res):
+    content = Template(
+        """
+    TestCase {
+        name: "TestKeyboard"
+        when: windowShown
+        function test_keyboard(){
+            ${action}(${button},${modifier})
+            compare(textarea.text,"${res}")
+        }
+        function test_keyboard2(){ 
+            // we can press an already pressed key != not the case for mouse button
+            ${action}(${button},${modifier})
+            compare(textarea.text,"${res}${res}")
+        }
+    }
+    Text {
+        id: textarea
+        text: ""
+        focus:true
+        Keys.onPressed: {
+           if (event.key == Qt.Key_A) {
+                if (event.modifiers ==  Qt.ControlModifier) {
+                    text=text + "A"} 
+                else {text = text + "a"}
+            }
+        }
+        Keys.onReleased: {
+            if (event.key == Qt.Key_A) {
+                if (event.modifiers ==  Qt.ControlModifier) {
+                    text=text + "R"} 
+                else {text = text + "r"}
+            }
+        }
+    }
+    """
+    )
+    t, r = gabarit(
+        content.substitute(action=action, button=button, modifier=modifier, res=res),
+        "-s",
+        "-vv",
+    )
+    r.assert_outcomes(passed=2)

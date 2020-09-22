@@ -1,4 +1,4 @@
-from PySide2.QtCore import QObject, Property, Signal
+from pytestqml.qt import QObject, Signal, Property
 
 
 class Bla(QObject):

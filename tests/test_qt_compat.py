@@ -27,6 +27,7 @@ def test_qt_api():
     assert qt.QEventLoop.exec_
     assert qt.Signal
     assert qt.QQuickView
+    assert qt.QKeySequence
     assert qt.QObject
     assert qt.QtTest.QTest
     assert qt.QTest

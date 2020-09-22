@@ -1,6 +1,16 @@
-from typing import Any
+from typing import Any, Union
 
-from pytestqml.qt import QObject, Slot, QJSValue, Signal, Property, Qt, QPoint, QTest
+from pytestqml.qt import (
+    QObject,
+    Slot,
+    QJSValue,
+    Signal,
+    Property,
+    Qt,
+    QPoint,
+    QTest,
+    QKeySequence,
+)
 from pytestqt.qtbot import QtBot
 
 
@@ -16,6 +26,7 @@ class QmlBot(QObject):
         super().__init__()
         self.view = view
         self._settings = settings
+        # self.pressed_keys = set()
 
     def wait_signal(
         self,
@@ -32,6 +43,12 @@ class QmlBot(QObject):
             raising=raising,
             check_params_cb=check_params_cb,
         )
+
+    # def release_all_keys(self):
+    #     print(self.pressed_keys)
+    #     while self.pressed_keys:
+    #         key = self.pressed_keys.pop()
+    #         QTest.keyRelease(self.view, key)
 
     """
     Slots are used in PyTest. they should not be called directly but via a method of PyTest.qml
@@ -69,6 +86,20 @@ class QmlBot(QObject):
             button = Qt.MouseButton(button)
             getattr(QTest, action)(self.view, button, modifiers, point, delay)
 
+    @Slot(str, int, int, int)
+    def keyEvent(
+        self,
+        action: str,
+        key: int,
+        modifiers: int = None,
+        delay: int = None,
+    ):
+        # Conversion needed for pyqt5/pyside2 compat
+        # print(modifiers)
+        key = Qt.Key(key)
+        modifiers = Qt.KeyboardModifiers(modifiers)
+        getattr(QTest, action)(self.view, key, modifiers, delay)
+
     windowShownChanged = Signal()
 
     @Property(bool, notify=windowShownChanged)
@@ -99,3 +130,4 @@ class QmlBot(QObject):
     # def _event_handler(self):
     #     window = self.engine.rootObjects()[0]
     #     QTest.mousePress(window, Qt.LeftButton, Qt.NoModifier, QPoint(20, 10), 0)
+    # def _track_key(self, key):

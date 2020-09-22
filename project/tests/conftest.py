@@ -1,8 +1,9 @@
 from pathlib import Path
 
-from PySide2.QtCore import QObject, Slot
-from PySide2.QtQml import qmlRegisterType
+
 import sys
+
+from pytestqml.qt import QObject, Slot, qmlRegisterType
 
 sys.path.append(str(Path(__file__).parents[1]))
 from module import Bla

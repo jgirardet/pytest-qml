@@ -36,6 +36,7 @@ Qt = QtCore.Qt
 
 QColor = QtGui.QColor
 QGuiApplication = QtGui.QGuiApplication
+QKeySequence = QtGui.QKeySequence
 QQuickView = QtQuick.QQuickView
 
 QJSValue = QtQml.QJSValue

@@ -166,6 +166,29 @@ Item {
     }
 
     /*
+        keyClick
+    */
+    function keyClick(key, modifiers = Qt.NoModifier, delay = -1) {
+            qmlbot.keyEvent("keyClick", key, modifiers, delay)
+    }
+
+    /*
+        keyPress
+    */
+    function keyPress(key, modifiers = Qt.NoModifier, delay = -1) {
+            qmlbot.keyEvent("keyPress", key, modifiers, delay)
+    }
+
+    /*
+        keyRelaase
+    */
+    function keyRelease(key, modifiers = Qt.NoModifier, delay = -1) {
+            qmlbot.keyEvent("keyRelease", key, modifiers, delay)
+    }
+
+
+
+    /*
         mouseClick
     */
     function mouseClick(item, x = item.width / 2, y = item.height / 2, button = Qt.LeftButton, modifiers = Qt.NoModifier, delay = -1) {
