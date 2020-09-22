@@ -473,6 +473,7 @@ def test_mouse_move(gabarit):
         ("keyPress", "Qt.Key_A", "Qt.ControlModifier", "A"),
         ("keyRelease", "Qt.Key_A", "Qt.ControlModifier", "R"),
         ("keyRelease", "Qt.Key_A", "Qt.NoModifier", "r"),
+        ("keySequence", '"a,a"', "Qt.NoModifier", "arar"),
     ],
 )
 def test_keyboard(gabarit, action, button, modifier, res):
@@ -482,13 +483,13 @@ def test_keyboard(gabarit, action, button, modifier, res):
         name: "TestKeyboard"
         when: windowShown
         function test_keyboard(){
-            textarea.forceActiveFocus()
+            textarea.forceActiveFocus() // neededon CI
             ${action}(${button},${modifier})
             compare(textarea.text,"${res}")
         }
         function test_keyboard2(){ 
             // we can press an already pressed key != not the case for mouse button
-            textarea.forceActiveFocus()
+            textarea.forceActiveFocus() // needed on CI
             ${action}(${button},${modifier})
             compare(textarea.text,"${res}${res}")
         }

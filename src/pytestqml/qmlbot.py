@@ -100,6 +100,10 @@ class QmlBot(QObject):
         modifiers = Qt.KeyboardModifiers(modifiers)
         getattr(QTest, action)(self.view, key, modifiers, delay)
 
+    @Slot(str)
+    def keySequence(self, seq: str):
+        QTest.keySequence(self.view, QKeySequence(seq))
+
     windowShownChanged = Signal()
 
     @Property(bool, notify=windowShownChanged)

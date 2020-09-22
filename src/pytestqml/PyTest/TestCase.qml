@@ -186,6 +186,13 @@ Item {
             qmlbot.keyEvent("keyRelease", key, modifiers, delay)
     }
 
+    /*
+        keySequence
+    */
+    function keySequence(seq) {
+            qmlbot.keySequence(seq)
+    }
+
 
 
     /*
