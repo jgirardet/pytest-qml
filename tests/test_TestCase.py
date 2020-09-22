@@ -482,11 +482,13 @@ def test_keyboard(gabarit, action, button, modifier, res):
         name: "TestKeyboard"
         when: windowShown
         function test_keyboard(){
+            textarea.forceActiveFocus()
             ${action}(${button},${modifier})
             compare(textarea.text,"${res}")
         }
         function test_keyboard2(){ 
             // we can press an already pressed key != not the case for mouse button
+            textarea.forceActiveFocus()
             ${action}(${button},${modifier})
             compare(textarea.text,"${res}${res}")
         }
