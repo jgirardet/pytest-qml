@@ -1,4 +1,4 @@
-from typing import Any, Union
+from typing import Any
 
 from pytestqml.qt import (
     QObject,
@@ -45,12 +45,6 @@ class QmlBot(QObject):
             check_params_cb=check_params_cb,
         )
 
-    # def release_all_keys(self):
-    #     print(self.pressed_keys)
-    #     while self.pressed_keys:
-    #         key = self.pressed_keys.pop()
-    #         QTest.keyRelease(self.view, key)
-
     """
     Slots are used in PyTest. they should not be called directly but via a method of PyTest.qml
     
@@ -61,28 +55,6 @@ class QmlBot(QObject):
         if isinstance(value, QJSValue):
             value = value.toVariant()
         print(value)
-
-    @Slot("QVariant", "QVariant", result=bool)
-    def compare(self, lhs: Any, rhs: Any) -> bool:
-        """
-        Used in TestCase.compare.
-        It assumes lhs, rhs are of the same type.
-
-        """
-        # print("ici", lhs, rhs)
-
-        if isinstance(lhs, QJSValue):
-            lhs = lhs.toVariant()
-        if isinstance(rhs, QJSValue):
-            rhs = rhs.toVariant()
-
-        # if isinstance(lhs, QRegularExpression):
-        #     # assert lhs.patternOptions()
-        #     print(lhs, rhs)
-        #     print(int(lhs.patternOptions()), int(rhs.patternOptions()))
-        #     # assert rhs.patternOptions() == lhs.patternOptions()
-
-        return lhs == rhs
 
     @Slot(str, str)
     def addExpectToFail(self, tag: str, message: str):

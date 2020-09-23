@@ -6,3 +6,4 @@ pdbpp
 tox
 pre-commit
 black
+requests

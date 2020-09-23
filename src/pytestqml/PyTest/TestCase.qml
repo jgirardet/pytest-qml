@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import "utils.mjs" as U
 import QtQuick.Window 2.2
+import "lodash.js" as Lodash
 
 Item {
         id: root
@@ -47,7 +48,6 @@ Item {
             The window isExposed.
         */
         property bool windowShown: qmlbot ? qmlbot.windowShown : false
-//        onWindowShownChanged: qmlbot.debug("changed"+windowShown)
 
         /*
             temporaryObjects: created by createTemporaryObject. cleaned up at end of the test
@@ -62,7 +62,6 @@ Item {
             running=false
             testCompleted()
             return res
-////
          }
 
             runOneTest(testToRun)
@@ -109,7 +108,9 @@ Item {
         return res
     }
 
-
+/*
+Bellow this line you can find the QtTest PublicAPI
+*/
 
     /*
         cleanup the current test
@@ -123,8 +124,7 @@ Item {
     */
     function compare(lhs, rhs, msg="") {
       let expfail = qmlbot.isExpectedToFail("")
-      // true = xpassed, false = xpassed, null = usual
-      expfail = expfail ? expfail : null
+      expfail = expfail ? expfail : null // true = xpassed, false = xpassed, null = usual
       let expfailmessage = ""
       if (expfail)
         {
@@ -143,12 +143,7 @@ Item {
       }
 
     function _compare(lhs, rhs) {
-      let res = false
-      if (typeof lhs === typeof rhs){
-        res = qmlbot.compare(lhs, rhs)
-        }
-
-      return res
+      return _.isEqual(lhs, rhs)
       }
 
     /*
@@ -195,7 +190,6 @@ Item {
     function init() {
 
     }
-
 
     /*
         keyClick
@@ -297,11 +291,11 @@ Item {
             timeout = 5000
         if (msg === undefined)
             msg = "property " + prop
-        if (!qmlbot.compare(obj[prop], value))
+        if (!_compare(obj[prop], value))
             wait(0)
         var i = 0
         while (i < timeout ) {
-                    if (qmlbot.compare(obj[prop], value)){
+                    if (_compare(obj[prop], value)){
                         break;
                     }
                     wait(50)

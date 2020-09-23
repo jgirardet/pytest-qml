@@ -50,6 +50,13 @@ Usage
 
 * TODO
 
+Differences with C++ implementation
+--------------------------------------
+pytest-qml aimns to be fully compatible with QML QtTest public api except importing `import PyTest 1.0` instead
+of `import QtTest 1.2`.
+Were are actually trying to make it pass QtTest test suite. You can follow it here https://github.com/jgirardet/pytest-qml/issues/2.
+
+
 Contributing
 ------------
 Contributions are very welcome. Tests can be run with `tox`_, please ensure

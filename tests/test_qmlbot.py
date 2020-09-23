@@ -74,10 +74,6 @@ def test_wait(bot):
     assert delta == pytest.approx(100, 10)
 
 
-def test_compare():
-    pass  # tested in test_TestCase.py
-
-
 def test_windowShown(bot: QmlBot, qtbot):
     assert not bot.windowShown
     bot.view.show()
