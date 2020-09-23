@@ -70,7 +70,6 @@ class QmlBot(QObject):
 
         """
         # print("ici", lhs, rhs)
-        from PySide2.QtCore import qCritical, QRegularExpression
 
         if isinstance(lhs, QJSValue):
             lhs = lhs.toVariant()

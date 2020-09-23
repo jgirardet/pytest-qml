@@ -1,6 +1,5 @@
 from pathlib import Path
 
-from _pytest.mark import Mark, MarkDecorator
 from pytestqml.exceptions import PytestQmlError
 from pytestqml.qmlbot import QmlBot
 
