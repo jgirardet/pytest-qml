@@ -109,22 +109,50 @@ Item {
         return res
     }
 
+
+
+    /*
+        cleanup the current test
+    */
+    function cleanup() {
+    }
+
+
     /*
         compare values and throws msg if lhs != rhs
     */
     function compare(lhs, rhs, msg="") {
+      let expfail = qmlbot.isExpectedToFail("")
+      // true = xpassed, false = xpassed, null = usual
+      expfail = expfail ? expfail : null
+      let expfailmessage = ""
+      if (expfail)
+        {
+        expfailmessage = qmlbot.getExpectedToFailMessage("")
+        }
+      let res = false
+
+      res = _compare(lhs,rhs)
+      if (res && expfail){  // exp fail but doesn't fail == xpassed
+        expfail = false // turn from xfailed to xpassed
+        msg = "compare returned TRUE unexpectedly"
+        res = false // make it throw
+      }
+      if (!res)
+        throw new U.CompareError(msg, {"lhs":lhs, "rhs":rhs, "expectFail":expfail,"expectFailMessage":expfailmessage})
+      }
+
+    function _compare(lhs, rhs) {
       let res = false
       if (typeof lhs === typeof rhs){
         res = qmlbot.compare(lhs, rhs)
         }
-      if (!res)
-        throw new U.CompareError(msg, {"lhs":lhs, "rhs":rhs})
+
+      return res
       }
 
     /*
         createTemporaryObject
-
-        See cleanup for differences with C++/QT
     */
     function createTemporaryObject(component, parent, properties={})  {
       if (component.status != 1) {
@@ -137,14 +165,28 @@ Item {
     }
 
 
+   /*
+       fail the current test with msg
+   */
+   function expectFail(tag, msg) {
+        if (tag === undefined) {
+            warn("tag argument missing from expectFail()")
+            tag = ""
+        }
+        if (msg === undefined) {
+            warn("message argument missing from expectFail()")
+            msg = ""
+        }
+        qmlbot.addExpectToFail(tag, msg)
+    }
+
     /*
         fail the current test with msg
     */
     function fail(msg) {
         if (msg === undefined)
             msg = "";
-        qtest_results.fail(msg, util.callerFile(), util.callerLine())
-        throw new Error("QtQuickTest::fail")
+        throw new U.PytestError(msg)
     }
 
     /*
@@ -154,16 +196,6 @@ Item {
 
     }
 
-
-    /*
-        cleanup the current test
-
-        Not so useful as C++/Qt implementation since each test is run
-        independently so everything wil be destroyed after the test, whatever happen.
-
-    */
-    function cleanup() {
-    }
 
     /*
         keyClick

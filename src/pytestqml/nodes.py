@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from _pytest.mark import Mark, MarkDecorator
 from pytestqml.exceptions import PytestQmlError
 from pytestqml.qmlbot import QmlBot
 
@@ -111,6 +112,7 @@ class QMLItem(pytest.Item):
         super().__init__(testcase.name + "::" + name, parent)
         self.testname = name
         self.testcase = testcase
+        self.add_marker("qmltest")
 
     def runtest(self):
         view = self.parent.view  # type: TestView
@@ -143,8 +145,15 @@ class QMLItem(pytest.Item):
             return
         elif "type" in result:
             if result["type"] == "SkipError":
-                print(f'Skipped: {result["message"]}')  # either message is not printed
-                pytest.skip(msg=result["message"])
+                pytest.skip(msg='result["message"]')
+            elif result["expectFail"] is not None:
+                expfail = result["expectFail"]  # True means xfail and False xpassed
+                aa = pytest.mark.xfail(
+                    self, reason=result["expectFailMessage"], strict=expfail
+                )
+                self.add_marker(aa)
+                if not expfail:
+                    return
 
         err_msg = self._format_report(result)
         raise PytestQmlError(err_msg)

@@ -20,6 +20,8 @@ class PyTestError extends Error {
   constructor(message, extra={}) {
         super(message);
         this.type = "PyTestError" // this.type because this.name gives TypeError
+        this.expectFail=null
+        this.expectFailMessage=""
         Object.assign(this, extra)
   }
   toString() {

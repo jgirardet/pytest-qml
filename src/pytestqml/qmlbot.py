@@ -26,6 +26,7 @@ class QmlBot(QObject):
         super().__init__()
         self.view = view
         self._settings = settings
+        self.expectedToFail = {}
         # self.pressed_keys = set()
 
     def wait_signal(
@@ -68,11 +69,37 @@ class QmlBot(QObject):
         It assumes lhs, rhs are of the same type.
 
         """
+        # print("ici", lhs, rhs)
+        from PySide2.QtCore import qCritical, QRegularExpression
+
         if isinstance(lhs, QJSValue):
             lhs = lhs.toVariant()
         if isinstance(rhs, QJSValue):
             rhs = rhs.toVariant()
+
+        # if isinstance(lhs, QRegularExpression):
+        #     # assert lhs.patternOptions()
+        #     print(lhs, rhs)
+        #     print(int(lhs.patternOptions()), int(rhs.patternOptions()))
+        #     # assert rhs.patternOptions() == lhs.patternOptions()
+
         return lhs == rhs
+
+    @Slot(str, str)
+    def addExpectToFail(self, tag: str, message: str):
+        """
+        tag: str =  test_name+tag
+        message: str = message
+        """
+        self.expectedToFail[tag] = message
+
+    @Slot(str, result=bool)
+    def isExpectedToFail(self, tag: str):
+        return tag in self.expectedToFail
+
+    @Slot(str, result=str)
+    def getExpectedToFailMessage(self, tag: str):
+        return self.expectedToFail.pop(tag)
 
     @Slot(str, QPoint, int, int, int)
     def mouseEvent(

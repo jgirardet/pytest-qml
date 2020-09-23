@@ -54,13 +54,25 @@ Item {
             keyClick(Qt.Key_A)
             compare(textarea.text,"a")
         }
-        function test_keyboardsequ() {
-            textarea.forceActiveFocus()
-            textarea.text=""
-            keySequence("abcd")
+//        function test_keyboardsequ() {
+//            textarea.forceActiveFocus()
+//            textarea.text=""
+//            keySequence("abcd")
 //            compare(textarea.text,"A")
 //            keyClick(Qt.Key_A)
 //            compare(textarea.text,"a")
+//        }
+        function test_xfail_fail() {
+            expectFail("","reason of  xfailed")
+//            print("should XFAIL")
+//            console.error("ojlihk")
+//            console.critical("ojlihk")
+            compare(1,0)
         }
+        function test_xfail_pass_() {
+            expectFail("","should xpassed")
+            compare(1,1)
+        }
+
     }
 }

@@ -61,6 +61,7 @@ Item {
         ("1", '"1"', "failed"),
         ("[1,2,3]", "[1,2,3]", "passed"),
         ("[1,2,3]", "[1,1,3]", "failed"),
+        ("[]", "[]", "passed"),
         ('{"aa":"bb", "cc":"cc"}', '{"aa":"bb", "cc":"cc"}', "passed"),
         ('{"aa":"bb", "cc":"cc"}', '{"aa":"bb", "cc":"XX"}', "failed"),
         ("obj1", "obj1", "passed"),
@@ -77,6 +78,8 @@ Item {
         ("rect1", "rect2", "failed"),
         ("size1", "size1", "passed"),
         ("size1", "size2", "failed"),
+        ("[]", "null", "failed"),
+        ("[]", "null", "failed"),
     ],
 )
 def test_compare_various_type(testdir, lhs, rhs, res):
@@ -85,6 +88,21 @@ def test_compare_various_type(testdir, lhs, rhs, res):
     result.stdout.fnmatch_lines_random([f"*1 {res}*"])
     if res == "failed":
         result.stdout.fnmatch_lines_random([f"*CompareError*"])
+
+
+# def test_compare_without_raise(file1cas1test1):
+#
+#     t, r = file1cas1test1(
+#         """
+#     //verify(compare([],[],"",false))
+#     //compare(_compare([null],[undefined]), false)
+#      var r = /foo/;
+#      var rm1 = /foo/m;
+#     compare(_compare(r, rm1), false,)
+#     """
+#     )
+#     # r.stdout.fnmatch_lines_random([f"*1 passed*"])
+#     r.assert_outcomes(passed=1)
 
 
 class TestTryCompare:
@@ -521,3 +539,28 @@ def test_keyboard(gabarit, action, button, modifier, res):
         "-vv",
     )
     r.assert_outcomes(passed=2)
+
+
+def test_expect_fail_fail(file1cas1test1):
+    t, r = file1cas1test1(
+        """
+        expectFail("", "doit afficher passed malgree erreur")
+        compare( 1,0)
+    """
+    )
+    r.assert_outcomes(xfailed=1)
+
+
+def test_expect_fail_pass(file1cas1test1):
+    t, r = file1cas1test1(
+        """
+        expectFail("", "doit afficher passed malgree erreur")
+        compare( 1,1)
+    """,
+    )
+    r.assert_outcomes(xpassed=1)
+
+
+def test_fail(file1cas1test1):
+    t, r = file1cas1test1("""fail("test failed by user")""", "-vv", "-s")
+    r.assert_outcomes(failed=1)
