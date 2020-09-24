@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 from pytestqml.qt import (
     QObject,
@@ -71,6 +71,12 @@ class QmlBot(QObject):
     @Slot(str, result=str)
     def getExpectedToFailMessage(self, tag: str):
         return self.expectedToFail.pop(tag)
+
+    @Slot(QObject, str, result=QObject)
+    def findChild(self, parent: QObject, objectName: str) -> Optional[QObject]:
+        if not parent:
+            return
+        return parent.findChild(QObject, objectName)
 
     @Slot(str, QPoint, int, int, int)
     def mouseEvent(

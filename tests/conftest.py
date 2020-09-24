@@ -1,7 +1,6 @@
 from string import Template
 
 import pytest
-from pytestqml.qt import qmlRegisterType, QObject
 
 pytest_plugins = "pytester"
 

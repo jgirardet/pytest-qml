@@ -185,6 +185,46 @@ Bellow this line you can find the QtTest PublicAPI
     }
 
     /*
+        finChild(parent, objectName)
+        strict copy/pasted from QtTest/TestCase.qml from Pyside2.15
+        except `qtest_results` change to `qmlbot`
+
+    */
+    function findChild(parent, objectName) {
+        // First, search the visual item hierarchy.
+        var child = qtest_findVisualChild(parent, objectName);
+        if (child)
+            return child;
+
+        print(parent, objectName)
+        // If it's not a visual child, it might be a QObject child.
+        return qmlbot.findChild(parent, objectName);
+    }
+
+    /*! strict copy pasted from QtTest/TestCase.qml form PySide2.15 */
+    function qtest_findVisualChild(parent, objectName) {
+        if (!parent || parent.children === undefined)
+            return null;
+
+        for (var i = 0; i < parent.children.length; ++i) {
+            // Is this direct child of ours the child we're after?
+            var child = parent.children[i];
+            if (child.objectName === objectName)
+                return child;
+        }
+
+        for (i = 0; i < parent.children.length; ++i) {
+            // Try the direct child's children.
+            child = qtest_findVisualChild(parent.children[i], objectName);
+            if (child)
+                return child;
+        }
+        return null;
+    }
+
+
+
+    /*
         init(): executed befrore each tests
     */
     function init() {
@@ -338,7 +378,7 @@ Bellow this line you can find the QtTest PublicAPI
         verify that condition is true
       */
      function verify(condition, message="") {
-        compare(condition, true)
+        compare(Boolean(condition), true)
      }
 
     /*
