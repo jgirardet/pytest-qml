@@ -5,7 +5,7 @@ import os
 import codecs
 from setuptools import setup, find_packages
 
-from pytestqml import __version__
+from src.pytestqml import __version__
 
 
 def read(fname):
