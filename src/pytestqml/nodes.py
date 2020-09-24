@@ -34,8 +34,6 @@ class TestView(QQuickView):
 
         engine = self.engine()
         engine.clearComponentCache()
-        # qmlRegisterType(MyObj, "MyType", 1, 0, "MyObj")
-        # print(engine)
         engine.setImportPathList([str(Path(__file__).parent)] + engine.importPathList())
         self.rootContext().setContextProperty("qmlbot", self.qmlbot)
 
@@ -134,12 +132,12 @@ class QMLItem(pytest.Item):
     def repr_failure(self, excinfo):
         return excinfo.value
 
-    # def reportinfo(self):
-    #     return (
-    #         self.fspath,
-    #         None,
-    #         f"{self.testcase.name}: {self.name}",
-    #     )
+    def reportinfo(self):
+        return (
+            self.fspath,
+            None,
+            f"{self.parent.name}::{self.name}",
+        )
 
     def _handle_result(self, result: dict):
         if not result:
@@ -147,7 +145,7 @@ class QMLItem(pytest.Item):
         elif "type" in result:
             if result["type"] == "SkipError":
                 pytest.skip(msg='result["message"]')
-            elif result["expectFail"] is not None:
+            elif result.get("expectFail", None) is not None:
                 expfail = result["expectFail"]  # True means xfail and False xpassed
                 aa = pytest.mark.xfail(
                     self, reason=result["expectFailMessage"], strict=expfail
@@ -170,4 +168,4 @@ class QMLItem(pytest.Item):
         # intro = f"""{result["type"]} at line {line}"""
         stack = format_stack_trace(result["stack"], self.testname)
         report = n + context + n + stack
-        return "\n".join(report)
+        return "\n".join(report) + "\n\n"

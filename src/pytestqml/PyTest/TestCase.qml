@@ -1,7 +1,6 @@
 import QtQuick 2.0
 import "utils.mjs" as U
 import QtQuick.Window 2.2
-import "lodash.js" as Lodash
 
 Item {
         id: root
@@ -95,8 +94,8 @@ Item {
             }
          }
         try {
-        cleanup()
-        temporaryObjects = []
+            cleanup()
+            temporaryObjects = []
         } catch (cleanupErr) {
             let error = new U.CleanupError(cleanupErr.message, {"other":res})
             error.stack  = cleanupErr.stack
@@ -356,8 +355,6 @@ Bellow this line you can find the QtTest PublicAPI
         var child = qtest_findVisualChild(parent, objectName);
         if (child)
             return child;
-
-        print(parent, objectName)
         // If it's not a visual child, it might be a QObject child.
         return qmlbot.findChild(parent, objectName);
     }
