@@ -108,5 +108,5 @@ def test_qtTest(testdir, filename, passed, failed, xpassed, xfailed):
     content = format_test_file(filename)
     # print(content)
     testdir.makefile(".qml", **{filename: base.substitute(content=content)})
-    r = testdir.runpytest("-s", "-vv", "--no-qt-log")
+    r = testdir.runpytest("-vv")
     r.assert_outcomes(passed=passed, failed=failed, xpassed=xpassed, xfailed=xfailed)
