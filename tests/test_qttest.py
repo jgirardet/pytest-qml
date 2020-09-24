@@ -53,7 +53,8 @@ base_url = Template(
     "https://code.qt.io/cgit/qt/qtdeclarative.git/plain/tests/auto/qmltest/selftests/${file}?h=5.15.1"
 )
 
-END = "\r\n" if sys.platform == "win32" else "\n"
+END = "\n"
+# END = "\r\n" if sys.platform == "win32" else "\n"
 
 
 def findstart(content: str):
@@ -90,7 +91,7 @@ def format_test_file(filename: str):
     # download if not already
     if not path.is_file():
         res = requests.get(base_url.substitute(file=filename))
-        path.write_text(res.text)
+        path.write_bytes(res.content)
     filecontent = path.read_text()
     commented = comment_know_errors(filename, filecontent)
     content = format_for_test(commented)
