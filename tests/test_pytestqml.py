@@ -246,7 +246,7 @@ def test_collect_with_context_propertie(testdir):
     result.assert_outcomes(passed=1)
 
 
-@pytest.mark.xfail(reason="succeeds alone, but not in the whole test suite without")
+@pytest.mark.runalone()
 def test_register_new_qml_type(testdir):
     testdir.makefile(
         ".qml",

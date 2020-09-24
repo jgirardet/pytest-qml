@@ -94,7 +94,6 @@ def format_test_file(filename: str):
     return content
 
 
-@pytest.mark.xfail(reason="succeeds alone, but not in the whole test suite without")
 @pytest.mark.parametrize(
     "filename, passed, failed, xpassed, xfailed",
     [
@@ -104,6 +103,7 @@ def format_test_file(filename: str):
         ("tst_findChild.qml", 1, 0, 0, 0),
     ],
 )
+@pytest.mark.runalone()
 def test_qtTest(testdir, filename, passed, failed, xpassed, xfailed):
     content = format_test_file(filename)
     # print(content)

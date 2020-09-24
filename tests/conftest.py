@@ -1,6 +1,8 @@
+import re
 from string import Template
 
 import pytest
+from _pytest.nodes import Item
 
 pytest_plugins = "pytester"
 
@@ -65,3 +67,14 @@ def gabarit(testdir):
         return testdir, result
 
     return wrapped
+
+
+def pytest_runtest_setup(item: Item):
+    """skip runalone test when global run"""
+
+    if item.get_closest_marker("runalone"):
+        name = re.match(r"test_([^\[]+)", item.name).group()
+        if not item.config.args or not any(
+            re.match(fr".*\:\:{name}", arg) for arg in item.config.args
+        ):
+            pytest.skip(msg="should run alone")
