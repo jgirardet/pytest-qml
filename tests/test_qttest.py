@@ -92,7 +92,7 @@ def format_test_file(filename: str):
     if not path.is_file():
         res = requests.get(base_url.substitute(file=filename))
         path.write_bytes(res.content)
-    filecontent = path.read_text()
+    filecontent = path.read_text(encoding="utf-8")
     commented = comment_know_errors(filename, filecontent)
     content = format_for_test(commented)
     return content
