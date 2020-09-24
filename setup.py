@@ -5,6 +5,8 @@ import os
 import codecs
 from setuptools import setup, find_packages
 
+from pytestqml import __version__
+
 
 def read(fname):
     file_path = os.path.join(os.path.dirname(__file__), fname)
@@ -13,7 +15,7 @@ def read(fname):
 
 setup(
     name="pytest-qml",
-    version="0.1.0",
+    version=__version__,
     author="Jimmy Girardet",
     author_email="ijkl@netc.fr",
     maintainer="Jimmy Girardet",
