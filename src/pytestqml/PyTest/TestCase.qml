@@ -332,7 +332,7 @@ Bellow this line you can find the QtTest PublicAPI
             i += 50
         }
         msg = msg ? msg : `tryVerify fonction never got true`
-        compare(expressionFunction(), true, msg)
+        compare(Boolean(expressionFunction()), true, msg)
     }
       /*
         verify that condition is true

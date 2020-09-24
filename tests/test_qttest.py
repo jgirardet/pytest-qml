@@ -36,15 +36,15 @@ FILES = {
     "tst_compare.qml": [
         LineError(start=1194, end=1194, msg="who is wrong loadsh or qt ?")
     ],
-    # "tst_compare_quickobjects.qml",
-    # "tst_createTemporaryObject.qml",
-    # "tst_datadriven.qml",
-    # "tst_destroy.qml",
-    # "tst_findChild.qml",
-    # "tst_grabImage.qml",
-    # "tst_selftests.qml",
-    # "tst_stringify.qml",
-    # "tst_tryVerify.qml",
+    "tst_compare_quickobjects.qml": [],
+    "tst_createTemporaryObject.qml": [],
+    # "tst_datadriven.qml": [],
+    # "tst_destroy.qml": [],
+    # "tst_findChild.qml": [],
+    # "tst_grabImage.qml": [],
+    # "tst_selftests.qml": [],
+    # "tst_stringify.qml": [],
+    "tst_tryVerify.qml": [],
 }
 
 base_url = Template(
@@ -97,12 +97,14 @@ def format_test_file(filename: str):
     "filename, passed, failed, xpassed, xfailed",
     [
         ("tst_compare.qml", 8, 0, 0, 2),
+        ("tst_compare_quickobjects.qml", 0, 0, 0, 1),
+        ("tst_tryVerify.qml", 1, 0, 0, 0),
     ],
 )
-@pytest.mark.xfail(reason="succeeds alone, but not in the whole test suite without")
+# @pytest.mark.xfail(reason="succeeds alone, but not in the whole test suite without")
 def test_QtTest(testdir, filename, passed, failed, xpassed, xfailed):
-    content = format_test_file("tst_compare.qml")
+    content = format_test_file(filename)
     # print(content)
-    testdir.makefile(".qml", tst_compare=base.substitute(content=content))
+    testdir.makefile(".qml", **{filename: base.substitute(content=content)})
     r = testdir.runpytest("-s")
     r.assert_outcomes(passed=passed, failed=failed, xpassed=xpassed, xfailed=xfailed)
