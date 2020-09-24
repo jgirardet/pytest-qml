@@ -1,10 +1,10 @@
-from dataclasses import dataclass
 from pathlib import Path
 from string import Template
 import re
 
 import pytest
 import requests
+import attr
 
 pytest_plugins = "pytester"
 
@@ -23,7 +23,7 @@ Item {
 )
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class LineError:
     """first line and last line INCLUSIVELY"""
 
