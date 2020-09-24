@@ -55,13 +55,13 @@ base_url = Template(
 
 
 def findstart(content: str):
-    for n, line in enumerate(content.split("\n")):
+    for n, line in enumerate(content.splitlines()):
         if "TestCase" in line:
             return n - 1
 
 
 def comment_know_errors(filename: str, content: str):
-    lines = content.split("\n")
+    lines = content.splitlines(keepends=False)
 
     for err in FILES[filename]:
         for n in range(err.start, err.end + 1):
@@ -74,7 +74,7 @@ def format_for_test(content: str):
     _compared = content  # content.replace("qtest_compareInternal", "_compare")
     # strip start of the file
     start = findstart(_compared)
-    stripped = "\n".join(_compared.split("\n")[start:])
+    stripped = "\n".join(_compared.splitlines(keepends=False)[start:])
     # add some lines to keep line number as original
     destripped = "//\n" * (start - 1) + stripped
     # rename TestCase
