@@ -53,6 +53,8 @@ base_url = Template(
     "https://code.qt.io/cgit/qt/qtdeclarative.git/plain/tests/auto/qmltest/selftests/${file}?h=5.15.1"
 )
 
+END = "\r\n" if sys.platform == "win32" else "\n"
+
 
 def findstart(content: str):
     for n, line in enumerate(content.splitlines()):
@@ -66,7 +68,7 @@ def comment_know_errors(filename: str, content: str):
     for err in FILES[filename]:
         for n in range(err.start, err.end + 1):
             lines[n - 1] = "//" + lines[n - 1]  # file start 1 not 0
-    return "\n".join(lines)
+    return END.join(lines)
 
 
 def format_for_test(content: str):
@@ -74,9 +76,9 @@ def format_for_test(content: str):
     _compared = content  # content.replace("qtest_compareInternal", "_compare")
     # strip start of the file
     start = findstart(_compared)
-    stripped = "\n".join(_compared.splitlines(keepends=False)[start:])
+    stripped = END.join(_compared.splitlines(keepends=False)[start:])
     # add some lines to keep line number as original
-    destripped = "//\n" * (start - 1) + stripped
+    destripped = "//END" * (start - 1) + stripped
     # rename TestCase
     name = re.search(r"name: \"(.+)\"", content).groups()[0]
     named = destripped.replace(name, "Test" + name)
