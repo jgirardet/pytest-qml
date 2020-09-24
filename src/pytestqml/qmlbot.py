@@ -10,6 +10,9 @@ from pytestqml.qt import (
     QPoint,
     QTest,
     QKeySequence,
+    QUrl,
+    QVector3D,
+    QDateTime,
 )
 from pytestqt.qtbot import QtBot
 
@@ -63,6 +66,24 @@ class QmlBot(QObject):
         message: str = message
         """
         self.expectedToFail[tag] = message
+
+    @Slot("QVariant", "QVariant", result=int)
+    def compare(self, lhs: Any, rhs: Any) -> bool:
+        """
+        Used in TestCase.compare for some corner cases
+        return value:
+            0: false
+            1: true
+            2: skip
+
+        """
+        if isinstance(lhs, QJSValue):
+            lhs = lhs.toVariant()
+        if isinstance(rhs, QJSValue):
+            rhs = rhs.toVariant()
+        if isinstance(lhs, QUrl) and isinstance(rhs, QUrl):  # QTBUG-61297
+            return int(lhs == rhs)
+        return 2
 
     @Slot(str, result=bool)
     def isExpectedToFail(self, tag: str):
@@ -130,6 +151,32 @@ class QmlBot(QObject):
         if isinstance(value, QJSValue):
             value = value.toVariant()
         self._settings[key] = value
+
+    #
+    # @Slot("QVariant", result=str)
+    # def stringify(self, value: Any):
+    #     result: str = ""
+    #     if value.isObject():
+    #         v = value.toVariant()
+    #         if v.isValid():
+    #             v = value.toVariant()
+    #             if isinstance(v, QVector3D):
+    #                 result = f"Qt.Vector3d({v.x()}, {v.y()}, {v.z()})"
+    #             elif isinstance(v, QUrl):
+    #                 result = f"Qt.url({v.toString()})"
+    #             elif isinstance(v, QDateTime):
+    #                 result = v.toString(Qt.ISODateWithMs)
+    #             else:
+    #                 result = v.toString()
+    #         else:
+    #             result = "Object"
+    #
+    #     if not result:
+    #         if value.isArray():
+    #             result += str(value.toVariant())
+    #         else:
+    #             result += str(value)
+    #     return result
 
     """
     Private api

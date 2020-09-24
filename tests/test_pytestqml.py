@@ -81,7 +81,7 @@ import QtQuick 2.14
 import PyTest 1.0
 Item {
     TestCase {
-        name: "TestBla"
+        //name: "TestBla"
         function test_bla() {}
     }
 }
@@ -208,7 +208,7 @@ def test_collect_2_file_3_Case_6_test(testdir):
 
 def test_collect_1_file_1_Case_1_test_pass(testdir):
     testdir.makefile(".qml", tst_BBB=ITEM_1Case_1Test_pass)
-    result = testdir.runpytest("-s")
+    result = testdir.runpytest("-s", "-v")
     result.assert_outcomes(passed=1)
 
 

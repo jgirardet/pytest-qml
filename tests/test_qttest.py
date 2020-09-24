@@ -35,16 +35,16 @@ class LineError:
 
 FILES = {
     "tst_compare.qml": [
-        LineError(start=1194, end=1194, msg="who is wrong loadsh or qt ?")
+        # LineError(start=1194, end=1194, msg="who is wrong loadsh or qt ?")
     ],
     "tst_compare_quickobjects.qml": [],
-    # "tst_createTemporaryObject.qml": [],
-    # "tst_datadriven.qml": [],
-    # "tst_destroy.qml": [],
+    "tst_createTemporaryObject.qml": [],
+    "tst_datadriven.qml": [],
+    "tst_destroy.qml": [],
     "tst_findChild.qml": [],
-    # "tst_grabImage.qml": [],
-    # "tst_selftests.qml": [],
-    # "tst_stringify.qml": [],
+    "tst_grabImage.qml": [],
+    "tst_selftests.qml": [],
+    "tst_stringify.qml": [],
     "tst_tryVerify.qml": [],
 }
 
@@ -70,7 +70,7 @@ def comment_know_errors(filename: str, content: str):
 
 def format_for_test(content: str):
     # change internal comparaison name
-    _compared = content.replace("qtest_compareInternal", "_compare")
+    _compared = content  # content.replace("qtest_compareInternal", "_compare")
     # strip start of the file
     start = findstart(_compared)
     stripped = "\n".join(_compared.split("\n")[start:])
@@ -101,6 +101,7 @@ def format_test_file(filename: str):
         ("tst_compare_quickobjects.qml", 0, 0, 0, 1),
         ("tst_tryVerify.qml", 1, 0, 0, 0),
         ("tst_findChild.qml", 1, 0, 0, 0),
+        # ("tst_selftests.qml", 1, 0, 0, 0),
     ],
 )
 @pytest.mark.runalone()
@@ -108,5 +109,5 @@ def test_qtTest(testdir, filename, passed, failed, xpassed, xfailed):
     content = format_test_file(filename)
     # print(content)
     testdir.makefile(".qml", **{filename: base.substitute(content=content)})
-    r = testdir.runpytest("-vv")
+    r = testdir.runpytest("-vv", "-s", "--no-qt-log")
     r.assert_outcomes(passed=passed, failed=failed, xpassed=xpassed, xfailed=xfailed)

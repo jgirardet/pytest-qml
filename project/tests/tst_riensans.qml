@@ -9,7 +9,6 @@ Item {
         id: bla
     }
     TestCase {
-        name: "TestRienSans"
         function test_simple(){
             compare(1,1)
         }

@@ -28,20 +28,29 @@ for module in COMMON:
     key = module.split(".")[-1]
     vars()[module] = import_module(".".join((qtapi, module)))
 
+# QtCore
+QDateTime = QtCore.QDateTime
 QEventLoop = QtCore.QEventLoop
 QObject = QtCore.QObject
 QPoint = QtCore.QPoint
 QPointF = QtCore.QPointF
 Qt = QtCore.Qt
+QUrl = QtCore.QUrl
 
+# QtGui
 QColor = QtGui.QColor
 QGuiApplication = QtGui.QGuiApplication
 QKeySequence = QtGui.QKeySequence
+QVector3D = QtGui.QVector3D
+
+# QtQuick
 QQuickView = QtQuick.QQuickView
 
-QJSValue = QtQml.QJSValue
+# QtQml
 qmlRegisterType = QtQml.qmlRegisterType
+QJSValue = QtQml.QJSValue
 
+# QtTest
 QTest = QtTest.QTest
 
 if PYSIDE2:

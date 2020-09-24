@@ -91,12 +91,10 @@ class QMLFile(pytest.File):
 
         # iter over all children of tst_file.qml root.
         # TestCases are selected if they a name starting with "Test"
-        for testcase in self.view.rootObject().children():
-            testCaseName = testcase.property("name")
-
+        for n, testcase in enumerate(self.view.rootObject().children()):
             # each TestCase has to have a `name` property starting with `Test`
-            if testCaseName and testCaseName.startswith("Test"):
-                testcase.name = testCaseName
+            if testcase.property("isPythonTestCase"):
+                testcase.name = testcase.property("name") or f"TestCase{n}"
                 collected_js = testcase.property("collected")
                 if collected_js:
                     collected = collected_js.toVariant()
@@ -136,8 +134,12 @@ class QMLItem(pytest.Item):
     def repr_failure(self, excinfo):
         return excinfo.value
 
-    def reportinfo(self):
-        return self.fspath, None, f"{self.parent.name}: {self.name}"
+    # def reportinfo(self):
+    #     return (
+    #         self.fspath,
+    #         None,
+    #         f"{self.testcase.name}: {self.name}",
+    #     )
 
     def _handle_result(self, result: dict):
         if not result:
@@ -158,7 +160,6 @@ class QMLItem(pytest.Item):
         raise PytestQmlError(err_msg)
 
     def _format_report(self, result: dict):
-        report = []
         n = [""]
         filename = self.parent.source.fileName()
         source = self.parent.source.toLocalFile()

@@ -1,40 +1,7 @@
 from string import Template
 import pytest
 
-#
-# COMPARE = Template(
-#     """
-# import QtQuick 2.14
-# import PyTest 1.0
-# Item {
-#     Item {
-#         id: obj1
-#     }
-#     Item {
-#         id: obj2
-#     }
-#     TestCase {
-#         name: "TestBla"
-#         property date date1: new Date(2018, 8, 22)
-#         property date date2: new Date(2018, 8, 21)
-#         property color color1: "red"
-#         property color color2: "blue"
-#         property url url1: "www.he.fr"
-#         property url url2: "www.ha.fr"
-#         property point point1: Qt.point(1,2)
-#         property point point2: Qt.point(1,3)
-#         property rect rect1: Qt.rect(1,1, 10, 20)
-#         property rect rect2: Qt.rect(1,1, 10, 10)
-#         property size size1: Qt.size(10, 20)
-#         property size size2: Qt.size(10, 10)
-#         function test_compare() {
-#             compare(${lhs},${rhs})
-#         }
-#
-#     }
-# }
-# """
-# )
+
 WINDOW_SHOWN = Template(
     """
 import QtQuick 2.14
@@ -52,43 +19,68 @@ Item {
 }"""
 )
 
-#
-# @pytest.mark.parametrize(
-#     "lhs, rhs, res",
-#     [
-#         ('"a"', '"a"', "passed"),
-#         ('"a"', '"b"', "failed"),
-#         ("1", "1", "passed"),
-#         ("1", '"1"', "failed"),
-#         ("[1,2,3]", "[1,2,3]", "passed"),
-#         ("[1,2,3]", "[1,1,3]", "failed"),
-#         ("[]", "[]", "passed"),
-#         ('{"aa":"bb", "cc":"cc"}', '{"aa":"bb", "cc":"cc"}', "passed"),
-#         ('{"aa":"bb", "cc":"cc"}', '{"aa":"bb", "cc":"XX"}', "failed"),
-#         ("obj1", "obj1", "passed"),
-#         ("obj1", "obj2", "failed"),
-#         ("date1", "date1", "passed"),
-#         ("date1", "date2", "failed"),
-#         ("color1", "color1", "passed"),
-#         ("color1", "color2", "failed"),
-#         ("url1", "url1", "passed"),
-#         ("url1", "url2", "failed"),
-#         ("point1", "point1", "passed"),
-#         ("point1", "point2", "failed"),
-#         ("rect1", "rect1", "passed"),
-#         ("rect1", "rect2", "failed"),
-#         ("size1", "size1", "passed"),
-#         ("size1", "size2", "failed"),
-#         ("[]", "null", "failed"),
-#         ("[]", "null", "failed"),
-#     ],
-# )
-# def test_compare_various_type(testdir, lhs, rhs, res):
-#     testdir.makefile(".qml", tst_BBB=COMPARE.substitute(lhs=lhs, rhs=rhs))
-#     result = testdir.runpytest("-s")
-#     result.stdout.fnmatch_lines_random([f"*1 {res}*"])
-#     if res == "failed":
-#         result.stdout.fnmatch_lines_random([f"*CompareError*"])
+
+def test_compare_various_type(
+    testdir,
+):
+    testdir.makefile(
+        ".qml",
+        tst_BBB="""
+import QtQuick 2.0
+import PyTest 1.0
+Item {
+    Item {
+        id: obj1
+    }
+    Item {
+        id: obj2
+    }
+    TestCase {
+        name: "TestBla"
+        property date date1: new Date(2018, 8, 22)
+        property date date2: new Date(2018, 8, 21)
+        property date date3: new Date(2018, 8, 21)
+        property color color1: "red"
+        property color color2: "blue"
+        property color color3: "blue"
+        property url url1: "www.he.fr"
+        property url url2: "www.ha.fr"
+        property url url3: "www.ha.fr"
+        property point point1: Qt.point(1,2)
+        property point point2: Qt.point(1,3)
+        property point point3: Qt.point(1,3)
+        property rect rect1: Qt.rect(1,1, 10, 20)
+        property rect rect2: Qt.rect(1,1, 10, 10)
+        property rect rect3: Qt.rect(1,1, 10, 10)
+        property size size1: Qt.size(10, 20)
+        property size size2: Qt.size(10, 10)
+        property size size3: Qt.size(10, 10)
+        
+        
+        function test_compare() {
+        compare(qtest_compareInternal(date1, date1), true)
+        compare(qtest_compareInternal(date1, date2), false)
+        compare(qtest_compareInternal(date2, date3), true)
+        compare(qtest_compareInternal(color1, color1), true)
+        compare(qtest_compareInternal(color1, color2), false)
+        compare(qtest_compareInternal(color2, color3), true)
+        compare(qtest_compareInternal(color1, color1), true)
+        compare(qtest_compareInternal(rect1, rect2), false)
+        compare(qtest_compareInternal(rect2, rect3), true)
+        compare(qtest_compareInternal(rect1, rect1), true)
+        compare(qtest_compareInternal(size1, size2), false)
+        compare(qtest_compareInternal(size2, size3), true)
+        compare(qtest_compareInternal(size1, size1), true)
+        compare(qtest_compareInternal(url1, url2), false) // QTBUG-61297
+        compare(qtest_compareInternal(url2, url3), true)
+        compare(qtest_compareInternal(url1, url1), true)
+        }
+    }
+    }
+    """,
+    )
+    result = testdir.runpytest("-s", "-vv", "--no-qt-log")
+    result.assert_outcomes(passed=1)
 
 
 # def test_compare_without_raise(file1cas1test1):

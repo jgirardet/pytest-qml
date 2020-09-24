@@ -21,12 +21,15 @@ def test_qt_api():
     assert qt.QtQuick.QQuickView
     assert qt.Property.read
     assert qt.Slot
+    assert qt.QUrl
+    assert qt.QDateTime
     assert qt.QPoint.x
     assert qt.QPointF.x
     assert qt.Qt.LeftButton
     assert qt.QEventLoop.exec_
     assert qt.Signal
     assert qt.QQuickView
+    assert qt.QVector3D
     assert qt.QKeySequence
     assert qt.QObject
     assert qt.QtTest.QTest
