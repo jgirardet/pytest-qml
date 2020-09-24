@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 from string import Template
 import re
@@ -109,5 +110,6 @@ def test_qtTest(testdir, filename, passed, failed, xpassed, xfailed):
     content = format_test_file(filename)
     # print(content)
     testdir.makefile(".qml", **{filename: base.substitute(content=content)})
-    r = testdir.runpytest("-vv", "-s", "--no-qt-log")
+    args = ["-vv"] if sys.platform == "win32" else ["-vv", "-s", "--no-qt-log"]
+    r = testdir.runpytest(*args)
     r.assert_outcomes(passed=passed, failed=failed, xpassed=xpassed, xfailed=xfailed)
