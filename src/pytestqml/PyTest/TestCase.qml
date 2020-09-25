@@ -14,6 +14,11 @@ Item {
         property var collected: ({})
 
         /*
+            TestCase completed
+        */
+        property bool completed: false
+
+        /*
             Name of the TestCase
         */
         property string name: ""
@@ -104,6 +109,11 @@ Item {
         }
         result = res
         running=false
+        delete collected[testName]
+        if (Object.keys(collected).length==0){
+            cleanupTestCase()
+            completed=true
+        }
         testCompleted()
         return res
     }
@@ -118,8 +128,13 @@ Bellow this line you can find the QtTest PublicAPI
     function cleanup() {
     }
 
+    /*
+        cleanupTestCase
+    */
+    function cleanupTestCase() {
+    }
 
-    /*! \internal */
+
     // Determine what is o.
     // Discussions and reference: http://philrathe.com/articles/equiv
     // Test suites: http://philrathe.com/tests/equiv
@@ -128,7 +143,6 @@ Bellow this line you can find the QtTest PublicAPI
         if (typeof o === "undefined") {
             return "undefined";
 
-        // consider: typeof null === object
         } else if (o === null) {
             return "null";
 
@@ -282,7 +296,7 @@ Bellow this line you can find the QtTest PublicAPI
     }
 
 
-    /*!
+
 
 //    /*
 //        compare values and throws msg if lhs != rhs
@@ -381,12 +395,16 @@ Bellow this line you can find the QtTest PublicAPI
     }
 
 
-
     /*
         init(): executed befrore each tests
     */
     function init() {
+    }
 
+    /*
+        initTestCase(): executed before any other function
+    */
+    function initTestCase() {
     }
 
     /*
@@ -548,5 +566,6 @@ Bellow this line you can find the QtTest PublicAPI
 
      Component.onCompleted: {
         collectTests()
+        initTestCase()
      }
 }

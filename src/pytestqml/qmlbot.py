@@ -177,6 +177,37 @@ class QmlBot(QObject):
     #         else:
     #             result += str(value)
     #     return result
+    #
+    # @Slot(float, float, float, result=bool)
+    # @Slot(float, float, result=bool)
+    # @Slot(QColor, QColor, result=bool)
+    # @Slot(QColor, str, result=bool)
+    # @Slot(str, QColor, result=bool)
+    # @Slot(QColor, str, float, result=bool)
+    # @Slot(str, QColor, float, result=bool)
+    # @Slot(QColor, QColor, float, result=bool)
+    # @Slot(str, str, float, result=bool)
+    # def fuzzyCompare(
+    #     self, actual: fuzzyType, expected: fuzzyType, delta: float = 0.0
+    # ) -> bool:
+    #     """
+    #     Compare actual and expected with delta accepted.
+    #     """
+    #     if isinstance(actual, float) and isinstance(expected, float):
+    #         return abs(actual - expected) <= delta
+    #     else:
+    #         act = QColor(actual)
+    #         exp = QColor(expected)
+    #
+    #         if not act.isValid() or not exp.isValid():
+    #             return False
+    #         return (
+    #             abs(act.green() - exp.green()) <= delta
+    #             and abs(act.red() - exp.red()) <= delta
+    #             and abs(act.blue() - exp.blue()) <= delta
+    #             and abs(act.blue() - exp.blue()) <= delta
+    #             and abs(act.alpha() - exp.alpha()) <= delta
+    #         )
 
     """
     Private api

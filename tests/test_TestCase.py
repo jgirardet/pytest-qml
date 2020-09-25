@@ -557,3 +557,55 @@ def test_expect_fail_pass(file1cas1test1):
 def test_fail(file1cas1test1):
     t, r = file1cas1test1("""fail("test failed by user")""", "-vv", "-s")
     r.assert_outcomes(failed=1)
+
+
+def test_inittTestcase(gabarit):
+    t, r = gabarit(
+        """
+    TestCase {
+        name: "aaa"
+        function initTestCase(){
+            name = "bbb"
+        }
+        function test_aaa_devenu_bbb() {
+            compare(name, "bbb")
+        }
+    }
+    """
+    )
+    r.assert_outcomes(passed=1)
+
+
+def test_cleanupTestcase_and_completed(gabarit):
+    t, r = gabarit(
+        """
+    Rectangle {
+        id: rien
+        x: 5
+    }
+    TestCase {
+        id: firsttestcase
+        name: "aaaFirst"
+        function test_some(){
+            compare(rien.x,5)
+            compare(completed,false)
+            rien.x = 9
+            
+            
+        }
+        function cleanupTestCase(){
+            print("cleannenfenze")
+            rien.x = 15
+        }
+    }
+    TestCase {
+        name: "bbbSecond"
+        function test_after_cleaup_of_other(){
+            compare(rien.x, 15)
+            compare(firsttestcase.completed, true)
+            
+        }
+    }
+    """
+    )
+    r.assert_outcomes(passed=2)
