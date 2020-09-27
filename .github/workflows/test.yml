@@ -47,7 +47,7 @@ jobs:
 #        if: ${{ format('{{{0}-{1}{2} }}', matrix.tox-env, matrix.qt-lib, matrix.qtversion) != 'py39-pyside214' }}
     - name: mkdocs
       run: |
-        if: ${{ matrix.tox-env }}-${{ matrix.qt-lib }}${{ matrix.qtversion }} == "py38-pyside215"
+      if: ${{ matrix.tox-env }}-${{ matrix.qt-lib }}${{ matrix.qtversion }} == "py38-pyside215"
         pip install mkdocs
         mkdocs build
     - name: Deploy
