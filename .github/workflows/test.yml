@@ -47,10 +47,12 @@ jobs:
 #        if: ${{ format('{{{0}-{1}{2} }}', matrix.tox-env, matrix.qt-lib, matrix.qtversion) != 'py39-pyside214' }}
     - name: mkdocs
       run: |
+        if: ${{ matrix.tox-env }}-${{ matrix.qt-lib }}${{ matrix.qtversion }} == "py38-pyside215"
         pip install mkdocs
         mkdocs build
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
+      if: ${{ matrix.tox-env }}-${{ matrix.qt-lib }}${{ matrix.qtversion }} == "py38-pyside215"
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./site

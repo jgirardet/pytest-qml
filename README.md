@@ -11,4 +11,4 @@ instead of the C++/QtQuick test runner. It supports both PySide2 and PyQt5 >= 5.
 
 ![test_result](docs/test_result.png)
 
-For installation, usage, contributing, please [Read the doc](https://jgirardet.github.io/pytest-qml/)
+For installation, usage, contributing, please read the doc  [https://jgirardet.github.io/pytest-qml/](https://jgirardet.github.io/pytest-qml/)
