@@ -45,10 +45,13 @@ jobs:
       run: |
         tox -e ${{ matrix.tox-env }}-${{ matrix.qt-lib }}${{ matrix.qtversion }} -- -ra --color=yes
 #        if: ${{ format('{{{0}-{1}{2} }}', matrix.tox-env, matrix.qt-lib, matrix.qtversion) != 'py39-pyside214' }}
-    - name: Deploy docs
-      uses: mhausenblas/mkdocs-deploy-gh-pages@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: mkdocs
+      run: mkdocs build
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./site
 
   deploy:
     runs-on: ubuntu-latest
