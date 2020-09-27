@@ -4,15 +4,15 @@
 ![pypi](https://img.shields.io/pypi/v/pytest-qml.svg)
 ![downloads](https://static.pepy.tech/badge/pytest-qml)
 
-## Run QML Tests with pytest
+## Run QML Tests with PyTest
 
 ## Features
 This pytest plugin allows you to run qml tests via pytest 
-instead of the QT/C++ test runner. It supports both PySide2 and PyQt5 >= 5.14.2 .
+instead of the C++/QtQuick test runner. It supports both PySide2 and PyQt5 >= 5.14.2 .
 
 
 ## Installation
-```shell script
+```shell
 pip install pytest-qml
 ```
 ## Usage
@@ -35,22 +35,22 @@ Item {
 ```
 
 Run pytest. PyTest will collect tests in folder and subfolders like other python tests.
-```shell script
+```shell
 pytest
 ```
 You can tell PyTest to not run qml tests with the option `--skip-qml`.
-```shell script
+```shell
 pytest --skip-qml
 ```
-Qml logging is shutdown by default since it uses `pytest-qt` under the hood which capture all qt/qml logging by default.
+Qml logging is shutdown by default since it uses `pytest-qt` under the hood which captures all qt/qml logging by default.
 To see qml logs add `--no-qt-log` to pytest's `-s` option. More info at [pytest-qt](https://pytest-qt.readthedocs.io/en/latest/logging.html)
-```shell script
+```shell
 pytest -s --no-qt-log
 ```
 
 ## Executing Python code before QML Tests
 
-This adding using [pytest's hook system](https://docs.pytest.org/en/stable/writing_plugins.html#writing-hook-functions).
+This is done using [pytest's hook system](https://docs.pytest.org/en/stable/writing_plugins.html#writing-hook-functions).
 Pytest-qml add's the following custom hooks:
  
 ### pytest_qml_applicationAvalaible
@@ -82,7 +82,7 @@ def pytest_qml_qmlEngineAvailable(engine):
 ```
 To accomplish it there are various poosiblities:
   - Instantiate the object inside `conftest.py` file, it will exist during the whole test session:
-  ```python
+```python
 # conftest.py
 obj = SomeObj()
 def pytest_qml_qmlEngineAvailable(engine):
@@ -102,7 +102,7 @@ def pytest_qml_qmlEngineAvailable(engine):
 
 ### pytest_qml_context_properties
 This a convenience hook to register contextProperties. ContextProperty  will exist for the
-whole test file. It takes no parameter and return a dict.
+whole test file. It takes no parameter and returns a dict.
 ```python
 # contest.py
 def pytest_qml_context_properties():
@@ -146,22 +146,22 @@ A good start is to look at  [issue 1](https://github.com/jgirardet/pytest-qml/is
 to see what  still need to be done.
 
 - clone the repo and go inside
-```shell script
+```shell
 git clone https://github.com/jgirardet/pytest-qml
 cd pytest-qml
 ```
 -  create a virtual env and activate it
-```shell script
+```shell
 python3 -m venv myenv
 source myenv/bin/activate
 ```
 - update pip and install requirements
-```shell script
+```shell
 pip install -U pip
 pip install -r requirements.txt
 ```
 - install pre-commit hook (we use black)
-```shell script
+```shell
 pre-commit install
 ```
 - make your changes
@@ -171,13 +171,28 @@ pre-commit install
 ## License
 
 
-Distributed under the terms of the `GNU GPL v3.0`_ license, "pytest-qml" is free and open source software.
-Code parts from PySide2 owning to Qt Company are licensed under the LGPL-3.0.
-
-## Changelog
-see [CHANGELOG.rst](CHANGELOG.rst)
+Distributed under the terms of the `GNU GPL v3.0` license, "pytest-qml" is free and open source software.
+Code parts from PySide2 owning to Qt Company are licensed under the `LGPL-3.0`.
 
 ## Contributors
 Thanks to all the contributors helping in this project.
 - Jimmy Girardet
 - coming... hopefully :-)
+
+## Changelog
+#### 0.3.0
+- New
+    - use Custom TestCase
+    - use Pytest
+        - option --skip-qml
+        - nice qml error report
+    - use custom TestCase from module PyTest 1.0
+        - findChild, createTemporaryObject
+        - expectFail, fail, skip
+        - keySequence, keyClick, keyPress, keyRelease.
+        - tryVerify, verify, compare, tryCompare
+        - mousePress, mouseMove, mouseClick, mouseDClick.
+        - init, cleanup, initTestCase, cleanuptestCase
+    - add hooks : qml_context_property, qml_applicationAvailable, qml_qmlEngineAvalaible
+    - add qmlRegisterType support
+

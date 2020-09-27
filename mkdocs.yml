@@ -6,5 +6,5 @@ theme: readthedocs
 
 repo_url: https://github.com/jgirardet/pytest-qml
 
-pages:
-- Home: index.md
+nav:
+    - Home: index.md

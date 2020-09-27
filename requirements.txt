@@ -7,3 +7,4 @@ tox
 pre-commit
 black
 requests
+mkdocs
