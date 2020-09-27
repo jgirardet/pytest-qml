@@ -26,6 +26,7 @@ class TestView(QQuickView):
 
     def __init__(self, source, qmlfile, *args):
         self.app = QGuiApplication.instance() or QGuiApplication([])
+        qmlfile.config.hook.pytest_qml_applicationAvailable(app=self.app)
 
         super().__init__(*args)
         self.ctx_prop = qmlfile.config.hook.pytest_qml_context_properties() or [{}]
@@ -37,7 +38,7 @@ class TestView(QQuickView):
         engine.setImportPathList([str(Path(__file__).parent)] + engine.importPathList())
         self.rootContext().setContextProperty("qmlbot", self.qmlbot)
         self._set_context_properties()
-        qmlfile.config.hook.pytest_qmlEngineAvailable(engine=engine)
+        qmlfile.config.hook.pytest_qml_qmlEngineAvailable(engine=engine)
 
         # same as QtTest, don't no if it's needed
         self.setFlags(

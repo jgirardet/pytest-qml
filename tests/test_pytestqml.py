@@ -256,13 +256,30 @@ def test_pytest_qmlEngineAvailable(testdir):
         @Property(str)
         def aVar(self):
             return "this is aVar"
-    def pytest_qmlEngineAvailable(engine):
+    def pytest_qml_qmlEngineAvailable(engine):
         engine.cp = Cp()
         engine.rootContext().setContextProperty("cp", engine.cp)
         """
     )
     result = testdir.runpytest("-s")
     result.assert_outcomes(passed=1)
+
+
+def test_applicationAvailable(file1cas1test1):
+    t, r = file1cas1test1("""compare(Qt.application.name, "Cool App")""", run=False)
+    t.makeconftest(
+        """
+    from pytestqml.qt import QObject, Property
+    class Cp(QObject):
+        @Property(str)
+        def aVar(self):
+            return "this is aVar"
+    def pytest_qml_applicationAvailable(app):
+        app.setApplicationName("Cool App")
+        """
+    )
+    r = t.runpytest("-s")
+    r.assert_outcomes(passed=1)
 
 
 @pytest.mark.runalone()
