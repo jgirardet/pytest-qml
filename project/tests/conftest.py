@@ -9,8 +9,14 @@ sys.path.append(str(Path(__file__).parents[1]))
 from module import Bla
 
 
-def pytest_configure():
-    qmlRegisterType(Bla, "MyNewType", 1, 0, "Bla")
+qmlRegisterType(Bla, "MyNewType", 1, 0, "Bla")
+# def pytest_configure():
+#     pass
+
+
+#
+# def pytest_qml_applicationAvailable():
+#     qmlRegisterType(Bla, "MyNewType", 1, 0, "Bla")
 
 
 class CustomProp(QObject):
@@ -26,9 +32,9 @@ def pytest_qml_context_properties():
 aa = CustomProp()
 
 # from PySide2.QtCore import
-def pytest_qmlEngineAvailable(engine):
+def pytest_qml_qmlEngineAvailable(engine):
     #     print(engine.rootContext())
-    vv = {"a": CustomProp()}
+    # vv = {"a": CustomProp()}
     engine.aa = CustomProp()
     engine.rootContext().setContextProperty("a", engine.aa)
 

@@ -309,8 +309,8 @@ def test_register_new_qml_type(testdir):
         @Property(str)
         def aaa(self):
             return "aaa"
-    def pytest_configure():
-        qmlRegisterType(MyObj, "MyType", 1, 0, "MyObj")
+    # def pytest_qml_applicationAvailable():
+    qmlRegisterType(MyObj, "MyType", 1, 0, "MyObj")
     """
     )
     result = testdir.runpytest("-s")
