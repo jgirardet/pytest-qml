@@ -83,6 +83,7 @@ def pytest_qml_qmlEngineAvailable(engine):
         
 ```
 To accomplish it there are various poosiblities:
+
   - Instantiate the object inside `conftest.py` file, it will exist during the whole test session:
 ```python
 # conftest.py
