@@ -21,3 +21,5 @@ if __name__ == "__main__":
         tag()
     elif sys.argv[1] == "install_qt":
         install_qt()
+    else:
+        print("usage: tag, install_qt")
