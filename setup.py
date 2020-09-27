@@ -23,7 +23,7 @@ setup(
     license="GNU GPL v3.0",
     url="https://github.com/jgirardet/pytest-qml",
     description="Run QML Tests with pytest",
-    long_description=read("README.rst"),
+    long_description=read("README.md"),
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     entry_points={"pytest11": ["pytest-qml = pytestqml.plugin"]},
