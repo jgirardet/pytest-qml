@@ -198,8 +198,10 @@ def pytest_qml_qmlEngineAvailable(engine):
 
 </code></pre>
 
-<p>To accomplish it there are various poosiblities:
-  - Instantiate the object inside <code>conftest.py</code> file, it will exist during the whole test session:</p>
+<p>To accomplish it there are various poosiblities:</p>
+<ul>
+<li>Instantiate the object inside <code>conftest.py</code> file, it will exist during the whole test session:</li>
+</ul>
 <pre><code class="python"># conftest.py
 obj = SomeObj()
 def pytest_qml_qmlEngineAvailable(engine):
@@ -366,5 +368,5 @@ Code parts from PySide2 owning to Qt Company are licensed under the <code>LGPL-3
 
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2020-09-27 22:26:09.018078+00:00
+Build Date UTC : 2020-09-27 22:36:38.422359+00:00
 -->
