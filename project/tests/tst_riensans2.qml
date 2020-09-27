@@ -25,7 +25,7 @@ Item {
     TestCase {
         name: "TestRienSans2"
         function test_simple(){
-            compare(1,1)
+            compare("Hello","Good bye")
         }
 
         function test_deuxieme(){

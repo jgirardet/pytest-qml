@@ -6,6 +6,8 @@
 
 ## Run QML Tests with PyTest
 
+![test_result](test_result.png)
+
 ## Features
 This PyTest plugin allows you to run qml tests via pytest 
 instead of the C++/QtQuick test runner. It supports both PySide2 and PyQt5 >= 5.14.2 .
