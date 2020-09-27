@@ -56,16 +56,16 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: "3.8"
-    - name: mkdocs
-      run: |
-        pip install -U pip
-        pip install mkdocs
-        mkdocs build
-    - name: Deploy docs
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./site
+      - name: mkdocs
+        run: |
+          pip install -U pip
+          pip install mkdocs
+          mkdocs build
+      - name: Deploy docs
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
 
   deploy:
     runs-on: ubuntu-latest
