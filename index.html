@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Run QML Tests with pytest">
+  <meta name="author" content="Jimmy Girardet">
+  
+  <link rel="shortcut icon" href="img/favicon.ico">
+  <title>pytest-qml</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="css/theme.css" />
+  <link rel="stylesheet" href="css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Home";
+    var mkdocs_page_input_path = "index.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="js/jquery-2.1.1.min.js" defer></script>
+  <script src="js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="." class="icon icon-home"> pytest-qml</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href=".">Home</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#run-qml-tests-with-pytest">Run QML Tests with PyTest</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#features">Features</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#executing-python-code-before-qml-tests">Executing Python code before QML Tests</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#pytest_qml_applicationavalaible">pytest_qml_applicationAvalaible</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pytest_qml_qmlengineavalaible">pytest_qml_qmlEngineAvalaible</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#about-setting-a-contextproperty">about setting a ContextProperty</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pytest_qml_context_properties">pytest_qml_context_properties</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#resistering-new-types">Resistering new types</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#using-qt-qrc-file">Using Qt .qrc file</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#issues">Issues</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#contributing">Contributing</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#license">License</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#contributors">Contributors</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#changelog">Changelog</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#030">0.3.0</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href=".">pytest-qml</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Home</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/jgirardet/pytest-qml/edit/master/docs/index.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="pytest-qml">pytest-qml</h1>
+<p><img alt="build" src="https://github.com/jgirardet/pytest-qml/workflows/build/badge.svg?branch=master" />
+<img alt="pypi" src="https://img.shields.io/pypi/v/pytest-qml.svg" />
+<img alt="downloads" src="https://static.pepy.tech/badge/pytest-qml" /></p>
+<h2 id="run-qml-tests-with-pytest">Run QML Tests with PyTest</h2>
+<h2 id="features">Features</h2>
+<p>This pytest plugin allows you to run qml tests via pytest 
+instead of the C++/QtQuick test runner. It supports both PySide2 and PyQt5 &gt;= 5.14.2 .</p>
+<h2 id="installation">Installation</h2>
+<pre><code class="shell">pip install pytest-qml
+</code></pre>
+
+<h2 id="usage">Usage</h2>
+<p>Pytest-qml aims to be fully compatible with <a href="https://doc.qt.io/qt-5/qtquicktest-index.html#executing-c-before-qml-tests">Qt Quick Test</a> public api except using a 
+custom <code>TestCase</code> importing <code>import PyTest 1.0</code> instead of <code>import QtTest 1.2</code>.
+We  are aiming  to make it pass QtTest test suite. You can follow it at <a href="https://github.com/jgirardet/pytest-qml/issues/2">issue 2</a>.
+Already implemented Features, properties and methods can be found at <a href="https://github.com/jgirardet/pytest-qml/issues/1">issue 1</a>.</p>
+<pre><code class="qml">import QtQuick 2.0
+import PyTest 1.0
+
+Item {
+    TestCase {
+        function test_something() {
+            compare(1,1)
+        }                                               
+    }                            
+}
+</code></pre>
+
+<p>Run pytest. PyTest will collect tests in folder and subfolders like other python tests.</p>
+<pre><code class="shell">pytest
+</code></pre>
+
+<p>You can tell PyTest to not run qml tests with the option <code>--skip-qml</code>.</p>
+<pre><code class="shell">pytest --skip-qml
+</code></pre>
+
+<p>Qml logging is shutdown by default since it uses <code>pytest-qt</code> under the hood which captures all qt/qml logging by default.
+To see qml logs add <code>--no-qt-log</code> to pytest's <code>-s</code> option. More info at <a href="https://pytest-qt.readthedocs.io/en/latest/logging.html">pytest-qt</a></p>
+<pre><code class="shell">pytest -s --no-qt-log
+</code></pre>
+
+<h2 id="executing-python-code-before-qml-tests">Executing Python code before QML Tests</h2>
+<p>This is done using <a href="https://docs.pytest.org/en/stable/writing_plugins.html#writing-hook-functions">pytest's hook system</a>.
+Pytest-qml add's the following custom hooks:</p>
+<h3 id="pytest_qml_applicationavalaible">pytest_qml_applicationAvalaible</h3>
+<p>Same thing like C++ <code>applicationAvaliable</code>, except an <code>app</code> parameter provided for convenience.</p>
+<pre><code class="python"># conftest.py
+def pytest_qml_applicationAvailable(app):
+    app.setApplicationName(&quot;Cool App&quot;)
+</code></pre>
+
+<h3 id="pytest_qml_qmlengineavalaible">pytest_qml_qmlEngineAvalaible</h3>
+<p>Same thing like C++ <code>qmlEngineAvailable</code>.</p>
+<pre><code class="python">def pytest_qml_qmlEngineAvailable(engine):
+        engine.addImportPath(&quot;/some/path&quot;)
+</code></pre>
+
+<h5 id="about-setting-a-contextproperty">about setting a ContextProperty</h5>
+<p>Objects added with <code>engine.rootContext.setContextProperty("name", obj)</code> need to 
+stay referenced somewhere and not be garbage collected. The following code will
+not work:</p>
+<pre><code class="python"># conftest.py
+def pytest_qml_qmlEngineAvailable(engine):
+        engine.rootContext().setContextProperty(&quot;name&quot;, SomeObject())
+        # ====&gt; fail:  SomeObject() is garbage collected    
+
+</code></pre>
+
+<p>To accomplish it there are various poosiblities:
+  - Instantiate the object inside <code>conftest.py</code> file, it will exist during the whole test session:</p>
+<pre><code class="python"># conftest.py
+obj = SomeObj()
+def pytest_qml_qmlEngineAvailable(engine):
+        engine.rootContext().setContextProperty(&quot;name&quot;, obj)
+</code></pre>
+
+<ul>
+<li>add the object as attribute of engine, it will exists for the whole test file:</li>
+</ul>
+<pre><code class="python">#conftest.py
+def pytest_qml_qmlEngineAvailable(engine):
+        engine.cp = SomeObject()
+        engine.rootContext().setContextProperty(&quot;name&quot;, engine.cp)
+
+</code></pre>
+
+<ul>
+<li>use the hook  <a href="pytest_qml_context_properties">pytest_qml_context_properties</a></li>
+</ul>
+<h3 id="pytest_qml_context_properties">pytest_qml_context_properties</h3>
+<p>This a convenience hook to register contextProperties. ContextProperty  will exist for the
+whole test file. It takes no parameter and returns a dict.</p>
+<pre><code class="python"># contest.py
+def pytest_qml_context_properties():
+        return {&quot;cp&quot;:Cp()}
+</code></pre>
+
+<h3 id="resistering-new-types">Resistering new types</h3>
+<p>This can be done inside <code>conftest.py</code> or in the <code>pytest_configure</code> hook:</p>
+<pre><code class="python"># conftest.py
+
+qmlRegisterType(MyObj, &quot;MyType&quot;, 1, 0, &quot;MyObj&quot;)
+
+# or inside the hook
+def pytest_configure():
+    qmlRegisterType(MyObj, &quot;MyType&quot;, 1, 0, &quot;MyObj&quot;)
+
+</code></pre>
+
+<h3 id="using-qt-qrc-file">Using Qt .qrc file</h3>
+<p>This can be done inside <code>conftest.py</code> or in the <code>pytest_sessionstart</code> hook:</p>
+<pre><code class="python"># conftest.py
+
+from package import ressources.qrc
+
+# or inside the hook
+def pytest_sessionstart():
+    from package import ressources.qrc
+</code></pre>
+
+<h2 id="issues">Issues</h2>
+<p>If you encounter any problems, please <a href="https://github.com/jgirardet/pytest-qml/issues/new/choose">fille an issue</a> along with a detailed description.</p>
+<h2 id="contributing">Contributing</h2>
+<p>Every contribution is always welcomed. Don't hesitate to ask for some
+help if you need it, I'll be happy to provide some guidance.
+A good start is to look at  <a href="https://github.com/jgirardet/pytest-qml/issues/1">issue 1</a>
+to see what  still need to be done.</p>
+<ul>
+<li>clone the repo and go inside</li>
+</ul>
+<pre><code class="shell">git clone https://github.com/jgirardet/pytest-qml
+cd pytest-qml
+</code></pre>
+
+<ul>
+<li>create a virtual env and activate it</li>
+</ul>
+<pre><code class="shell">python3 -m venv myenv
+source myenv/bin/activate
+</code></pre>
+
+<ul>
+<li>update pip and install requirements</li>
+</ul>
+<pre><code class="shell">pip install -U pip
+pip install -r requirements.txt
+</code></pre>
+
+<ul>
+<li>install pre-commit hook (we use black)</li>
+</ul>
+<pre><code class="shell">pre-commit install
+</code></pre>
+
+<ul>
+<li>make your changes</li>
+<li>add your name to contributor</li>
+<li>Commit and push a Pull request</li>
+</ul>
+<h2 id="license">License</h2>
+<p>Distributed under the terms of the <code>GNU GPL v3.0</code> license, "pytest-qml" is free and open source software.
+Code parts from PySide2 owning to Qt Company are licensed under the <code>LGPL-3.0</code>.</p>
+<h2 id="contributors">Contributors</h2>
+<p>Thanks to all the contributors helping in this project.
+- Jimmy Girardet
+- coming... hopefully :-)</p>
+<h2 id="changelog">Changelog</h2>
+<h4 id="030">0.3.0</h4>
+<ul>
+<li>New<ul>
+<li>use Custom TestCase</li>
+<li>use Pytest<ul>
+<li>option --skip-qml</li>
+<li>nice qml error report</li>
+</ul>
+</li>
+<li>use custom TestCase from module PyTest 1.0<ul>
+<li>findChild, createTemporaryObject</li>
+<li>expectFail, fail, skip</li>
+<li>keySequence, keyClick, keyPress, keyRelease.</li>
+<li>tryVerify, verify, compare, tryCompare</li>
+<li>mousePress, mouseMove, mouseClick, mouseDClick.</li>
+<li>init, cleanup, initTestCase, cleanuptestCase</li>
+</ul>
+</li>
+<li>add hooks : qml_context_property, qml_applicationAvailable, qml_qmlEngineAvalaible</li>
+<li>add qmlRegisterType support</li>
+</ul>
+</li>
+</ul>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/jgirardet/pytest-qml/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+      
+    </span>
+</div>
+    <script>var base_url = '.';</script>
+    <script src="js/theme.js" defer></script>
+      <script src="search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.1.2
+Build Date UTC : 2020-09-27 21:05:04.062839+00:00
+-->
