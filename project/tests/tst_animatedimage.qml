@@ -195,36 +195,36 @@ Item {
             ]
         }
 
-        function test_imageSource(row) {
-            var expectError = (row.error.length != 0)
-            var canconnect = false;
-
-            print("on en est la")
-            if (expectError) {
-                var parentUrl = Qt.resolvedUrl(".")
-                ignoreWarning(row.error.replace(/SUB/g, parentUrl))
-            }
-
-            var img = Qt.createQmlObject('import QtQuick 2.0; AnimatedImage { source: "'+row.source+'" }', top)
-
-            if (row.remote) {
-                skip("Remote solution not yet complete")
-                tryCompare(img, "status", AnimatedImage.Loading)
-                tryCompare(top, "checkfinished", true, 10000)
-                if (top.canconnect == false)
-                    skip("Cannot access remote")
-            }
-            if (!expectError) {
-                tryCompare(img, "status", AnimatedImage.Ready, 10000)
-                compare(img.width, 160)
-                compare(img.height, 120)
-                compare(img.fillMode, AnimatedImage.Stretch)
-            } else {
-                tryCompare(img, "status", AnimatedImage.Error)
-            }
-
-            img.destroy()
-        }
+//        function test_imageSource(row) {
+//            var expectError = (row.error.length != 0)
+//            var canconnect = false;
+//
+//            print("on en est la")
+//            if (expectError) {
+//                var parentUrl = Qt.resolvedUrl(".")
+//                ignoreWarning(row.error.replace(/SUB/g, parentUrl))
+//            }
+//
+//            var img = Qt.createQmlObject('import QtQuick 2.0; AnimatedImage { source: "'+row.source+'" }', top)
+//
+//            if (row.remote) {
+//                skip("Remote solution not yet complete")
+//                tryCompare(img, "status", AnimatedImage.Loading)
+//                tryCompare(top, "checkfinished", true, 10000)
+//                if (top.canconnect == false)
+//                    skip("Cannot access remote")
+//            }
+//            if (!expectError) {
+//                tryCompare(img, "status", AnimatedImage.Ready, 10000)
+//                compare(img.width, 160)
+//                compare(img.height, 120)
+//                compare(img.fillMode, AnimatedImage.Stretch)
+//            } else {
+//                tryCompare(img, "status", AnimatedImage.Error)
+//            }
+//
+//            img.destroy()
+//        }
 
         function test_clearSource() {
             compare(clearSource.source, Qt.resolvedUrl(srcImage))

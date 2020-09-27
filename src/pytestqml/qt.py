@@ -49,6 +49,7 @@ QQuickView = QtQuick.QQuickView
 # QtQml
 qmlRegisterType = QtQml.qmlRegisterType
 QJSValue = QtQml.QJSValue
+QQmlEngine = QtQml.QQmlEngine
 
 # QtTest
 QTest = QtTest.QTest

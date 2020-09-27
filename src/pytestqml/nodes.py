@@ -24,11 +24,11 @@ class TestView(QQuickView):
 
     isExposedEvent = Signal()
 
-    def __init__(self, source, ctx_prop, *args):
+    def __init__(self, source, qmlfile, *args):
         self.app = QGuiApplication.instance() or QGuiApplication([])
 
         super().__init__(*args)
-        self.ctx_prop = ctx_prop
+        self.ctx_prop = qmlfile.config.hook.pytest_qml_context_properties() or [{}]
         self.qmlbot = QmlBot(self, settings={"whenTimeout": 2000})
         self.isExposedEvent.connect(self.qmlbot.windowShownChanged)
 
@@ -36,8 +36,8 @@ class TestView(QQuickView):
         engine.clearComponentCache()
         engine.setImportPathList([str(Path(__file__).parent)] + engine.importPathList())
         self.rootContext().setContextProperty("qmlbot", self.qmlbot)
-
         self._set_context_properties()
+        qmlfile.config.hook.pytest_qmlEngineAvailable(engine=engine)
 
         # same as QtTest, don't no if it's needed
         self.setFlags(
@@ -67,7 +67,7 @@ class TestView(QQuickView):
             self.resize(200, 200)
 
     def _set_context_properties(self):
-        for k, v in self.ctx_prop.items():
+        for k, v in self.ctx_prop[0].items():
             self.rootContext().setContextProperty(k, v)
 
     # def keyPressEvent(self, e):
@@ -82,9 +82,8 @@ class QMLFile(pytest.File):
     def collect(self):
         if self.config.getoption("skip-qml"):
             return []
-        cp = self.parent.config.hook.pytest_qml_context_properties() or [{}]
         self.view = TestView(
-            self.source, cp[0]
+            self.source, self
         )  # app should exists has long has collect()
 
         # iter over all children of tst_file.qml root.

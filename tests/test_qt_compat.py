@@ -36,4 +36,5 @@ def test_qt_api():
     assert qt.QTest
     assert qt.QColor.rgba
     assert qt.QJSValue.toVariant
+    assert qt.QQmlEngine.clearComponentCache
     assert qt.qmlRegisterType

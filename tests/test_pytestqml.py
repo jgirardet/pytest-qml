@@ -70,7 +70,8 @@ Item {
     TestCase {
         name: "TestBla"
         function test_bla() {
-            let avar = cp.aCpVar
+            let avar = cp.aVar
+            compare(avar, "this is aVar")
         }
     }
 }
@@ -240,6 +241,24 @@ def test_collect_with_context_propertie(testdir):
             return "this is aVar"
     def pytest_qml_context_properties():
         return {"cp":Cp()}
+        """
+    )
+    result = testdir.runpytest("-s")
+    result.assert_outcomes(passed=1)
+
+
+def test_pytest_qmlEngineAvailable(testdir):
+    testdir.makefile(".qml", tst_BBB=ITEM_1Case_1Test_cp)
+    testdir.makeconftest(
+        """
+    from pytestqml.qt import QObject, Property
+    class Cp(QObject):
+        @Property(str)
+        def aVar(self):
+            return "this is aVar"
+    def pytest_qmlEngineAvailable(engine):
+        engine.cp = Cp()
+        engine.rootContext().setContextProperty("cp", engine.cp)
         """
     )
     result = testdir.runpytest("-s")

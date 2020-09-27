@@ -21,3 +21,19 @@ class CustomProp(QObject):
 
 def pytest_qml_context_properties():
     return {"cp": CustomProp()}
+
+
+aa = CustomProp()
+
+# from PySide2.QtCore import
+def pytest_qmlEngineAvailable(engine):
+    #     print(engine.rootContext())
+    vv = {"a": CustomProp()}
+    engine.aa = CustomProp()
+    engine.rootContext().setContextProperty("a", engine.aa)
+
+
+# engine.rootContext().setContextProperty("cp", a)
+# engine.addImportPath("/tmp")
+# engine.rootContext().setContextProperty("cp", CustomProp())
+# print(engine.rootContext().contextProperty("cp"))
