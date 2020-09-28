@@ -60,9 +60,9 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#executing-python-code-before-qml-tests">Executing Python code before QML Tests</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#pytest_qml_applicationavalaible">pytest_qml_applicationAvalaible</a>
+    <li class="toctree-l3"><a class="reference internal" href="#pytest_qml_applicationavailable">pytest_qml_applicationAvailable</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#pytest_qml_qmlengineavalaible">pytest_qml_qmlEngineAvalaible</a>
+    <li class="toctree-l3"><a class="reference internal" href="#pytest_qml_qmlengineavailable">pytest_qml_qmlEngineAvailable</a>
         <ul>
     <li class="toctree-l4"><a class="reference internal" href="#about-setting-a-contextproperty">about setting a ContextProperty</a>
     </li>
@@ -174,14 +174,14 @@ To see qml logs add <code>--no-qt-log</code> to pytest's <code>-s</code> option.
 <h2 id="executing-python-code-before-qml-tests">Executing Python code before QML Tests</h2>
 <p>This is done using <a href="https://docs.pytest.org/en/stable/writing_plugins.html#writing-hook-functions">pytest's hook system</a>.
 Pytest-qml add's the following custom hooks:</p>
-<h3 id="pytest_qml_applicationavalaible">pytest_qml_applicationAvalaible</h3>
-<p>Same thing like C++ <code>applicationAvaliable</code>, except an <code>app</code> parameter provided for convenience.</p>
+<h3 id="pytest_qml_applicationavailable">pytest_qml_applicationAvailable</h3>
+<p>Same thing like C++ <code>applicationAvailable</code>, except an <code>app</code> parameter provided for convenience.</p>
 <pre><code class="python"># conftest.py
 def pytest_qml_applicationAvailable(app):
     app.setApplicationName(&quot;Cool App&quot;)
 </code></pre>
 
-<h3 id="pytest_qml_qmlengineavalaible">pytest_qml_qmlEngineAvalaible</h3>
+<h3 id="pytest_qml_qmlengineavailable">pytest_qml_qmlEngineAvailable</h3>
 <p>Same thing like C++ <code>qmlEngineAvailable</code>.</p>
 <pre><code class="python">def pytest_qml_qmlEngineAvailable(engine):
         engine.addImportPath(&quot;/some/path&quot;)
@@ -317,7 +317,7 @@ Code parts from PySide2 owning to Qt Company are licensed under the <code>LGPL-3
 <li>init, cleanup, initTestCase, cleanuptestCase</li>
 </ul>
 </li>
-<li>add hooks : qml_context_property, qml_applicationAvailable, qml_qmlEngineAvalaible</li>
+<li>add hooks : qml_context_property, qml_applicationAvailable, qml_qmlEngineAvailable</li>
 <li>add qmlRegisterType support</li>
 </ul>
 </li>
@@ -368,5 +368,5 @@ Code parts from PySide2 owning to Qt Company are licensed under the <code>LGPL-3
 
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2020-09-28 12:51:37.145218+00:00
+Build Date UTC : 2020-09-28 12:56:34.222958+00:00
 -->
