@@ -55,8 +55,8 @@ pytest -s --no-qt-log
 This is done using [pytest's hook system](https://docs.pytest.org/en/stable/writing_plugins.html#writing-hook-functions).
 Pytest-qml add's the following custom hooks:
  
-### pytest_qml_applicationAvalaible
-Same thing like C++ `applicationAvaliable`, except an `app` parameter provided for convenience.
+### pytest_qml_applicationAvailable
+Same thing like C++ `applicationAvailable`, except an `app` parameter provided for convenience.
 
 ```python
 # conftest.py
@@ -64,7 +64,7 @@ def pytest_qml_applicationAvailable(app):
     app.setApplicationName("Cool App")
 ```
 
-### pytest_qml_qmlEngineAvalaible
+### pytest_qml_qmlEngineAvailable
 Same thing like C++ `qmlEngineAvailable`.
 
 ```python
@@ -196,6 +196,6 @@ Thanks to all the contributors helping in this project.
         - tryVerify, verify, compare, tryCompare
         - mousePress, mouseMove, mouseClick, mouseDClick.
         - init, cleanup, initTestCase, cleanuptestCase
-    - add hooks : qml_context_property, qml_applicationAvailable, qml_qmlEngineAvalaible
+    - add hooks : qml_context_property, qml_applicationAvailable, qml_qmlEngineAvailable
     - add qmlRegisterType support
 
