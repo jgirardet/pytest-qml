@@ -139,7 +139,7 @@ def pytest_sessionstart():
 
 ## Issues
 
-If you encounter any problems, please [fille an issue](https://github.com/jgirardet/pytest-qml/issues/new/choose) along with a detailed description.
+If you encounter any problems, please [fill an issue](https://github.com/jgirardet/pytest-qml/issues/new/choose) along with a detailed description.
     
 
 ## Contributing
