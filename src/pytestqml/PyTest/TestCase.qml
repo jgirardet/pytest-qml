@@ -303,7 +303,7 @@ Bellow this line you can find the QtTest PublicAPI
 //    */
     function compare(lhs, rhs, msg="") {
       let expfail = qmlbot.isExpectedToFail("")
-      expfail = expfail ? expfail : null // true = xpassed, false = xpassed, null = usual
+      expfail = expfail ? expfail : null // true = xfail, false = xpassed, null = usual
       let expfailmessage = ""
       if (expfail)
         {
@@ -394,6 +394,22 @@ Bellow this line you can find the QtTest PublicAPI
         return null;
     }
 
+
+   /*
+        fuzzyCompare(actual, expected, delta)
+   */
+   function fuzzyCompare(actual, expected, delta, msg) {
+        if (delta === undefined)
+            throw new U.PyTestError("A delta value is required for fuzzyCompare")
+
+//        var success =
+//
+        if (!qmlbot.fuzzyCompare(actual, expected, delta)){
+            if (msg === undefined)
+                msg = `with delta=${delta}`
+            throw new U.CompareError(msg, {"lhs":actual, "rhs":expected})//, "expectFail":null,"expectFailMessage":""})
+        }
+    }
 
     /*
         init(): executed befrore each tests

@@ -609,3 +609,23 @@ def test_cleanupTestcase_and_completed(gabarit):
     """
     )
     r.assert_outcomes(passed=2)
+
+
+def test_fuzzycompare_success_float(file1cas1test1):
+    t, r = file1cas1test1("""fuzzyCompare(0.4,0.5, 0.1)""", "-vv", "-s")
+    r.assert_outcomes(passed=1)
+
+
+def test_fuzzycompare_fail_float(file1cas1test1):
+    t, r = file1cas1test1("""fuzzyCompare(0.4,0.5, 0.01)""", "-vv", "-s")
+    r.assert_outcomes(failed=1)
+
+
+def test_fuzzycompare_success_color(file1cas1test1):
+    t, r = file1cas1test1("""fuzzyCompare("red","#ff0000", 0)""", "-vv", "-s")
+    r.assert_outcomes(passed=1)
+
+
+def test_fuzzycompare_fail_float(file1cas1test1):
+    t, r = file1cas1test1("""fuzzyCompare("red","#f00000", 0)""", "-vv", "-s")
+    r.assert_outcomes(failed=1)

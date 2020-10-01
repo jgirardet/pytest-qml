@@ -179,10 +179,16 @@ Code parts from PySide2 owning to Qt Company are licensed under the `LGPL-3.0`.
 
 ## Contributors
 Thanks to all the contributors helping in this project.
+
 - Jimmy Girardet
 - coming... hopefully :-)
 
 ## Changelog
+
+#### unreleased
+- New
+    - add fuzzyCompare
+
 #### 0.3.0
 - New
     - use Custom TestCase

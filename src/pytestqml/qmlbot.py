@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 from pytestqml.qt import (
     QObject,
@@ -13,6 +13,7 @@ from pytestqml.qt import (
     QUrl,
     QVector3D,
     QDateTime,
+    QColor,
 )
 from pytestqt.qtbot import QtBot
 
@@ -99,6 +100,33 @@ class QmlBot(QObject):
             return
         return parent.findChild(QObject, objectName)
 
+    @Slot(QColor, QColor, float, result=bool)
+    @Slot(float, float, float, result=bool)
+    def fuzzyCompare(
+        self,
+        actual: Union[float, QColor],
+        expected: Union[float, QColor],
+        delta: float = 0.0,
+    ) -> bool:
+        """
+        Compare actual and expected with delta accepted.
+        """
+        print(actual, expected)
+        if isinstance(actual, float) and isinstance(expected, float):
+            return abs(actual - expected) <= delta
+        elif isinstance(actual, QColor) and isinstance(expected, QColor):
+            if not actual.isValid() or not expected.isValid():
+                return False
+            return (
+                abs(actual.green() - expected.green()) <= delta
+                and abs(actual.red() - expected.red()) <= delta
+                and abs(actual.blue() - expected.blue()) <= delta
+                and abs(actual.blue() - expected.blue()) <= delta
+                and abs(actual.alpha() - expected.alpha()) <= delta
+            )
+        else:
+            return False
+
     @Slot(str, QPoint, int, int, int)
     def mouseEvent(
         self, action: str, point: QPoint, button: int, modifiers: int, delay: int
@@ -178,36 +206,6 @@ class QmlBot(QObject):
     #             result += str(value)
     #     return result
     #
-    # @Slot(float, float, float, result=bool)
-    # @Slot(float, float, result=bool)
-    # @Slot(QColor, QColor, result=bool)
-    # @Slot(QColor, str, result=bool)
-    # @Slot(str, QColor, result=bool)
-    # @Slot(QColor, str, float, result=bool)
-    # @Slot(str, QColor, float, result=bool)
-    # @Slot(QColor, QColor, float, result=bool)
-    # @Slot(str, str, float, result=bool)
-    # def fuzzyCompare(
-    #     self, actual: fuzzyType, expected: fuzzyType, delta: float = 0.0
-    # ) -> bool:
-    #     """
-    #     Compare actual and expected with delta accepted.
-    #     """
-    #     if isinstance(actual, float) and isinstance(expected, float):
-    #         return abs(actual - expected) <= delta
-    #     else:
-    #         act = QColor(actual)
-    #         exp = QColor(expected)
-    #
-    #         if not act.isValid() or not exp.isValid():
-    #             return False
-    #         return (
-    #             abs(act.green() - exp.green()) <= delta
-    #             and abs(act.red() - exp.red()) <= delta
-    #             and abs(act.blue() - exp.blue()) <= delta
-    #             and abs(act.blue() - exp.blue()) <= delta
-    #             and abs(act.alpha() - exp.alpha()) <= delta
-    #         )
 
     """
     Private api
