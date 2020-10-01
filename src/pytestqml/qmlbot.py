@@ -100,8 +100,7 @@ class QmlBot(QObject):
             return
         return parent.findChild(QObject, objectName)
 
-    @Slot(QColor, QColor, float, result=bool)
-    @Slot(float, float, float, result=bool)
+    @Slot("QVariant", "QVariant", float, result=bool)
     def fuzzyCompare(
         self,
         actual: Union[float, QColor],
@@ -111,12 +110,18 @@ class QmlBot(QObject):
         """
         Compare actual and expected with delta accepted.
         """
-        print(actual, expected)
+        if isinstance(actual, bool) or isinstance(expected, bool):
+            return False
+
         if isinstance(actual, float) and isinstance(expected, float):
             return abs(actual - expected) <= delta
-        elif isinstance(actual, QColor) and isinstance(expected, QColor):
-            if not actual.isValid() or not expected.isValid():
-                return False
+
+        try:
+            actual = QColor(actual)
+            expected = QColor(expected)
+        except TypeError:
+            return False
+        if actual.isValid() and expected.isValid():
             return (
                 abs(actual.green() - expected.green()) <= delta
                 and abs(actual.red() - expected.red()) <= delta
@@ -124,8 +129,7 @@ class QmlBot(QObject):
                 and abs(actual.blue() - expected.blue()) <= delta
                 and abs(actual.alpha() - expected.alpha()) <= delta
             )
-        else:
-            return False
+        return False
 
     @Slot(str, QPoint, int, int, int)
     def mouseEvent(

@@ -95,7 +95,7 @@ def test_mouseEvent():
 @pytest.mark.parametrize(
     "lhs, rhs, delta,res",
     [
-        (True, True, None, False),  # won't compare anything else
+        (True, True, 0.0, False),  # won't compare anything else
         (0.123, 0.12, 0.01, True),
         (0.123, 0.12, 0.001, False),
         (QColor("#ff0000"), QColor("red"), 0, True),

@@ -629,3 +629,8 @@ def test_fuzzycompare_success_color(file1cas1test1):
 def test_fuzzycompare_fail_float(file1cas1test1):
     t, r = file1cas1test1("""fuzzyCompare("red","#f00000", 0)""", "-vv", "-s")
     r.assert_outcomes(failed=1)
+
+
+def test_fuzzycompare_fail_no_good_value(file1cas1test1):
+    t, r = file1cas1test1("""fuzzyCompare(["aa"],"#f00000", 0)""", "-vv", "-s")
+    r.assert_outcomes(failed=1)
