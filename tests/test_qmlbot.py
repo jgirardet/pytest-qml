@@ -2,7 +2,7 @@ from time import sleep, time
 
 import pytest
 from pytestqml.qmlbot import QmlBot
-from pytestqml.qt import QObject, Signal, QJSValue, QQuickView
+from pytestqml.qt import QObject, Signal, QJSValue, QQuickView, QColor
 from pytestqt.exceptions import TimeoutError
 
 
@@ -90,3 +90,46 @@ def test_settings(bot: QmlBot):
 
 def test_mouseEvent():
     pass  # tested in test_TestCase.py
+
+
+@pytest.mark.parametrize(
+    "lhs, rhs, delta,res",
+    [
+        (True, True, 0.0, False),  # won't compare anything else
+        (0.123, 0.12, 0.01, True),
+        (0.123, 0.12, 0.001, False),
+        (QColor("#ff0000"), QColor("red"), 0, True),
+        (
+            QColor.fromRgbF(1.000000, 0.000000, 0.99, 1.000000),
+            QColor.fromRgbF(1.000000, 0.000000, 1, 1.000000),
+            5,
+            True,
+        ),
+        (
+            QColor.fromRgbF(1.000000, 0.000000, 1, 1.000000),
+            QColor.fromRgbF(1.000000, 0.000000, 0.99, 1.000000),
+            0,
+            False,
+        ),
+        (
+            QColor.fromRgbF(1.000000, 0.01, 1, 1.000000),
+            QColor.fromRgbF(1.000000, 0.000000, 1, 1.000000),
+            5,
+            True,
+        ),
+        (
+            QColor.fromRgbF(0.99, 0, 1, 1.000000),
+            QColor.fromRgbF(1.000000, 0.000000, 1, 1.000000),
+            5,
+            True,
+        ),
+        (
+            QColor.fromRgbF(1, 0, 1, 0.99),
+            QColor.fromRgbF(1.000000, 0.000000, 1, 1.000000),
+            5,
+            True,
+        ),
+    ],
+)
+def test_fuzzyCompare(bot, lhs, rhs, delta, res):
+    assert bot.fuzzyCompare(lhs, rhs, delta) == res
