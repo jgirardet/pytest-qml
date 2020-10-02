@@ -63,7 +63,7 @@ def gabarit(testdir):
             tst_BBB=GABARIT.substitute(content=content),
         )
         if run:
-            result = testdir.runpytest("-s", *args)
+            result = testdir.runpytest("-s", "-vv", *args)
         return testdir, result
 
     return wrapped

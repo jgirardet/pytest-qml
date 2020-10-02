@@ -694,3 +694,21 @@ def test_signa_spy_wait(gabarit):
     r.stdout.fnmatch_lines_random(
         ["*signal noarg emitted 0 times but 1  was expected*"]
     )
+
+
+def test_data_driven(gabarit):
+    t, r = gabarit(
+        """
+    TestCase {
+        function test_bla_data() {return [{"tag":"un", "val":1}, {"tag":"deux", "val":2},{"val":3}]}
+        function test_bla(data) {
+            compare(data.val, 1)
+            
+        }
+    }
+    """
+    )
+    r.assert_outcomes(passed=1, failed=2)
+    r.stdout.fnmatch_lines_random(
+        ["*test_bla_deux FAILED*", "*test_bla_un PASSED*", "*test_bla_2 FAILED*"]
+    )
