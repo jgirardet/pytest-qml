@@ -12,6 +12,11 @@ Item {
             collected = {"testName":test_function}
         */
         property var collected: ({})
+        /*
+            All collected tests of this TestCase
+            collected = {"testName":test_function}
+        */
+        property var data_func_collected: ({})
 
         /*
             TestCase completed
@@ -75,21 +80,47 @@ Item {
 
       function collectTests() {
 
+        // First loop search for "data" function
         for (const [key, value] of Object.entries(root)){
-          if (key.startsWith("test_")){
-            collected[key] = value
+            if (typeof value == "function" && key.endsWith("_data")) {
+                  data_func_collected[key.slice(0,-5)] = value
             }
-
         }
 
+        // Second loop search for tests
+        for (const [key, value] of Object.entries(root)){
+          // keep only test functions
+          if (typeof value == "function" && key.startsWith("test_")){
+            // skip if "data" function
+            if (typeof value == "function" && key.endsWith("_data")) {
+                continue
+            }
+            // check if a data function exists
+            if (key in data_func_collected) {
+                let datas = data_func_collected[key]()
+                for (const [i,data] of datas.entries()) {
+                    // use "tag" if exists or index to name the function
+                    // will be : test_myfunc_tagname or test_myfunc_index (index is 0,1...)
+                    let name  = data.tag ? key+ "_"+ data.tag : key+"_"+i
+                    collected[name] = {"fn":value, "args": data}
+                }
+
+            // No data
+            } else {
+              collected[key] = {"fn":value,"args":undefined}
+            }
+          }
+
         }
+     }
 
      function runOneTest(testName) {
         running=true
         let res= {}
         try {
           init()
-          collected[testName]()
+          let theTest = collected[testName]
+          theTest.fn(theTest.args)
             }
         catch (err){
             if (err.type) {
