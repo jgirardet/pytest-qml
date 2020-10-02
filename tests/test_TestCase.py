@@ -712,3 +712,45 @@ def test_data_driven(gabarit):
     r.stdout.fnmatch_lines_random(
         ["*test_bla_deux FAILED*", "*test_bla_un PASSED*", "*test_bla_2 FAILED*"]
     )
+
+
+def test_data_driven_init_data(gabarit):
+    t, r = gabarit(
+        """
+    TestCase {
+        function init_data() {return [{"tag":"un", "val":1}, {"tag":"deux", "val":2},{"val":3}]}
+        function test_bla(data) {
+            compare(data.val, 1)
+            
+        }
+    }
+    """
+    )
+    r.assert_outcomes(passed=1, failed=2)
+    r.stdout.fnmatch_lines_random(
+        [
+            "*test_bla_deux FAILED*",
+            "*test_bla_un PASSED*",
+            "*test_bla_2 FAILED*",
+        ]
+    )
+
+
+def test_data_driven_arg_forgot(gabarit):
+    t, r = gabarit(
+        """
+    TestCase {
+        function init_data() {return [{"val":1}]}
+        function test_thought(data) {
+        }
+        function test_forgot() {
+        }
+    }
+    """
+    )
+    r.assert_outcomes(passed=2)
+    r.stdout.fnmatch_lines_random(
+        [
+            "*no data supplied for test_forgot_0",
+        ]
+    )

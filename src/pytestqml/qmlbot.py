@@ -1,3 +1,4 @@
+import warnings
 from typing import Any, Optional, Union
 
 from pytestqml.qt import (
@@ -190,6 +191,10 @@ class QmlBot(QObject):
             value = value.toVariant()
         self._settings[key] = value
 
+    @Slot(str)
+    def warn(self, value: str):
+        warnings.warn_explicit(value, QMLWarning, "", 0)
+
     #
     # @Slot("QVariant", result=str)
     # def stringify(self, value: Any):
@@ -225,3 +230,7 @@ class QmlBot(QObject):
     #     window = self.engine.rootObjects()[0]
     #     QTest.mousePress(window, Qt.LeftButton, Qt.NoModifier, QPoint(20, 10), 0)
     # def _track_key(self, key):
+
+
+class QMLWarning(UserWarning):
+    pass

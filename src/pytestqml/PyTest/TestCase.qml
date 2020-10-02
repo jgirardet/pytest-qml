@@ -77,8 +77,16 @@ Item {
             runOneTest(testToRun)
         }
 
-
       function collectTests() {
+        function collect_from_data(func, key, value) {
+            let datas = func()
+                for (const [i,data] of datas.entries()) {
+                    // use "tag" if exists or index to name the function
+                    // will be : test_myfunc_tagname or test_myfunc_index (index is 0,1...)
+                    let name  = data.tag ? key+ "_"+ data.tag : key+"_"+i
+                    collected[name] = {"fn":value, "args": data}
+                }
+        }
 
         // First loop search for "data" function
         for (const [key, value] of Object.entries(root)){
@@ -97,20 +105,16 @@ Item {
             }
             // check if a data function exists
             if (key in data_func_collected) {
-                let datas = data_func_collected[key]()
-                for (const [i,data] of datas.entries()) {
-                    // use "tag" if exists or index to name the function
-                    // will be : test_myfunc_tagname or test_myfunc_index (index is 0,1...)
-                    let name  = data.tag ? key+ "_"+ data.tag : key+"_"+i
-                    collected[name] = {"fn":value, "args": data}
-                }
-
+                collect_from_data(data_func_collected[key], key, value)
+            }
+            // take data from "init_data
+            else if ("init_data" in root) {
+                collect_from_data(init_data, key,value)
             // No data
             } else {
               collected[key] = {"fn":value,"args":undefined}
             }
           }
-
         }
      }
 
@@ -120,6 +124,10 @@ Item {
         try {
           init()
           let theTest = collected[testName]
+          if (typeof theTest.args != "undefined" && theTest.fn.length==0){
+            // data was not added to test_function parameter
+            warn("no data supplied for " + testName)
+          }
           theTest.fn(theTest.args)
             }
         catch (err){
@@ -609,6 +617,10 @@ Bellow this line you can find the QtTest PublicAPI
     */
     function wait(ms) {
         qmlbot.wait(ms)
+    }
+
+    function warn(msg) {
+        qmlbot.warn(msg)
     }
 
      Component.onCompleted: {
