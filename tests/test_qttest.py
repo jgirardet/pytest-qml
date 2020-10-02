@@ -116,3 +116,12 @@ def test_qtTest(testdir, filename, passed, failed, xpassed, xfailed):
     args = ["-vv"] if sys.platform == "win32" else ["-vv", "-s", "--no-qt-log"]
     r = testdir.runpytest(*args)
     r.assert_outcomes(passed=passed, failed=failed, xpassed=xpassed, xfailed=xfailed)
+
+
+# @pytest.mark.runalone()
+def test_drag(testdir):
+    path = Path(__file__).parent / "qt_tests" / "events" / "tst_drag.qml"
+    testdir.makefile(".qml", tst_drag=path.read_text())
+    args = ["-vv"] if sys.platform == "win32" else ["-vv", "-s", "--no-qt-log"]
+    r = testdir.runpytest(*args)
+    r.assert_outcomes(passed=6)
