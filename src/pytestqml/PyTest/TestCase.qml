@@ -139,6 +139,10 @@ Item {
          }
         try {
             cleanup()
+            for(const obj of temporaryObjects){
+            obj.destroy()
+            }
+
             temporaryObjects = []
         } catch (cleanupErr) {
             let error = new U.CleanupError(cleanupErr.message, {"other":res})
@@ -495,30 +499,112 @@ Bellow this line you can find the QtTest PublicAPI
     /*
         mouseClick
     */
-    function mouseClick(item, x = item.width / 2, y = item.height / 2, button = Qt.LeftButton, modifiers = Qt.NoModifier, delay = -1) {
+    function mouseClick(item, x, y, button, modifiers, delay) {
+            qtest_verifyItem(item, "mouseClick")
+            if (button === undefined)
+                button = Qt.LeftButton
+            if (modifiers === undefined)
+                modifiers = Qt.NoModifier
+            if (delay == undefined)
+                delay = -1
+            if (x === undefined)
+                x = item.width / 2
+            if (y === undefined)
+                y = item.height / 2
             let point = item.mapToItem(Window.contentItem, x, y)
             qmlbot.mouseEvent("mouseClick", point, button, modifiers, delay)
     }
     /*
         mouseDoubleClickSequence
     */
-    function mouseDoubleClickSequence(item, x = item.width / 2, y = item.height / 2, button = Qt.LeftButton, modifiers = Qt.NoModifier, delay = -1) {
+    function mouseDoubleClickSequence(item, x, y, button, modifiers, delay) {
+            qtest_verifyItem(item, "mouseDrag")
+            if (button === undefined)
+            button = Qt.LeftButton
+            if (modifiers === undefined)
+                modifiers = Qt.NoModifier
+            if (delay == undefined)
+                delay = -1
+            if (x === undefined)
+                x = item.width / 2
+            if (y === undefined)
+                y = item.height / 2
             let point = item.mapToItem(Window.contentItem, x, y)
             qmlbot.mouseEvent("mouseDClick", point, button, modifiers, delay)
     }
 
     /*
+        MouseDrag(item,x, y, dx, dy, button, modifiers, delay)
+        almost copy pasted from PySide2 5.15.1
+    */
+    function mouseDrag(item, x, y, dx, dy, button, modifiers, delay) {
+        qtest_verifyItem(item, "mouseDrag")
+
+        if (item.x === undefined || item.y === undefined)
+            return
+        if (button === undefined)
+            button = Qt.LeftButton
+        if (modifiers === undefined)
+            modifiers = Qt.NoModifier
+        if (delay == undefined)
+            delay = -1
+        // we fix qtest_events.defaultMouseDelay to 0 (the case or defautEventDelay)
+        var moveDelay = Math.max(1, delay === -1 ? 0 : delay)
+
+        // Divide dx and dy to have intermediate mouseMove while dragging
+        // Fractions of dx/dy need be superior to the dragThreshold
+        // to make the drag works though
+        var intermediateDx = Math.round(dx/3)
+        if (Math.abs(intermediateDx) < (qmlbot.dragThreshold + 1))
+            intermediateDx = 0
+        var intermediateDy = Math.round(dy/3)
+        if (Math.abs(intermediateDy) < (qmlbot.dragThreshold + 1))
+            intermediateDy = 0
+
+        mousePress(item, x, y, button, modifiers, delay)
+
+        // Trigger dragging by dragging past the drag threshold, but making sure to only drag
+        // along a certain axis if a distance greater than zero was given for that axis.
+        var dragTriggerXDistance = dx > 0 ? (qmlbot.dragThreshold + 1) : 0
+        var dragTriggerYDistance = dy > 0 ? (qmlbot.dragThreshold + 1) : 0
+        mouseMove(item, x + dragTriggerXDistance, y + dragTriggerYDistance, moveDelay, button)
+        if (intermediateDx !== 0 || intermediateDy !== 0) {
+            mouseMove(item, x + intermediateDx, y + intermediateDy, moveDelay, button)
+            mouseMove(item, x + 2*intermediateDx, y + 2*intermediateDy, moveDelay, button)
+        }
+//        mouseMove(item, x + dx, y + dy, moveDelay, button) // doesnt work  with it... why ? qttest and self test
+        mouseRelease(item, x + dx, y + dy, button, modifiers, delay)
+    }
+
+
+    /*
         mouseMove
     */
-    function mouseMove(item, x, y, delay=-1) {
+    function mouseMove(item, x, y, delay, buttons) {
+            qtest_verifyItem(item, "mouseMove")
+            if (delay == undefined)
+                delay = -1
+            if (buttons == undefined)
+                buttons = Qt.NoButton
             let point = item.mapToItem(Window.contentItem, x, y)
-            qmlbot.mouseEvent("mouseMove", point, Qt.NoButton, Qt.NoModifier, delay)
+            qmlbot.mouseEvent("mouseMove", point, buttons, Qt.NoModifier, delay)
     }
 
     /*
         mousePress
     */
-    function mousePress(item, x = item.width / 2, y = item.height / 2, button = Qt.LeftButton, modifiers = Qt.NoModifier, delay = -1) {
+    function mousePress(item, x, y, button, modifiers, delay) {
+            qtest_verifyItem(item, "mousePress")
+            if (button === undefined)
+            button = Qt.LeftButton
+            if (modifiers === undefined)
+                modifiers = Qt.NoModifier
+            if (delay == undefined)
+                delay = -1
+            if (x === undefined)
+                x = item.width / 2
+            if (y === undefined)
+                y = item.height / 2
             let point = item.mapToItem(Window.contentItem, x, y)
             qmlbot.mouseEvent("mousePress", point, button, modifiers, delay)
     }
@@ -527,7 +613,18 @@ Bellow this line you can find the QtTest PublicAPI
     /*
         mouseRelease
     */
-    function mouseRelease(item, x = item.width / 2, y = item.height / 2, button = Qt.LeftButton, modifiers = Qt.NoModifier, delay = -1) {
+    function mouseRelease(item, x, y, button, modifiers, delay) {
+            qtest_verifyItem(item, "mouseRelease")
+            if (button === undefined)
+            button = Qt.LeftButton
+            if (modifiers === undefined)
+                modifiers = Qt.NoModifier
+            if (delay == undefined)
+                delay = -1
+            if (x === undefined)
+                x = item.width / 2
+            if (y === undefined)
+                y = item.height / 2
             let point = item.mapToItem(Window.contentItem, x, y)
             qmlbot.mouseEvent("mouseRelease", point, button, modifiers, delay)
     }
@@ -623,8 +720,30 @@ Bellow this line you can find the QtTest PublicAPI
         qmlbot.warn(msg)
     }
 
+
+
+
      Component.onCompleted: {
         collectTests()
         initTestCase()
      }
+
+   /*
+    Qtest Functions copy pasted expect error managment
+    */
+
+    /*! \internal */
+    function qtest_verifyItem(item, method) {
+        try {
+            if (!(item instanceof Item) &&
+                !(item instanceof Window)) {
+                // it's a QObject, but not a type
+                throw new U.PyTestError("TypeError: %1 requires an Item or Window type".arg(method), 2);
+            }
+        } catch (e) { // it's not a QObject
+            throw new U.PyTestError("TypeError: %1 requires an Item or Window type".arg(method), 3);
+        }
+
+        return true;
+    }
 }

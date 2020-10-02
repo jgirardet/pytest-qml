@@ -475,6 +475,36 @@ def test_mouse_move(gabarit):
     r.assert_outcomes(passed=1)
 
 
+def test_mouse_drag(gabarit):
+    t, r = gabarit(
+        """
+    Rectangle {
+        id: rec
+        height: 50
+        width: 50
+        color: "red"
+        MouseArea {
+            id: area
+            anchors.fill:parent
+            drag.target: rec
+        }
+    }
+    TestCase {
+        function init() {
+            rec.x = 40
+            rec.y=30
+        }
+        function test_drag() {
+            mouseDrag(rec, 1,1,20,20)
+            compare(rec.x,40 + 20 - qmlbot.dragThreshold - 1) 
+            compare(rec.y, 30 +20 - qmlbot.dragThreshold - 1) 
+        }
+    }
+    """
+    )
+    r.assert_outcomes(passed=1)
+
+
 @pytest.mark.parametrize(
     "action, button, modifier, res",
     [
@@ -594,7 +624,6 @@ def test_cleanupTestcase_and_completed(gabarit):
             
         }
         function cleanupTestCase(){
-            print("cleannenfenze")
             rien.x = 15
         }
     }

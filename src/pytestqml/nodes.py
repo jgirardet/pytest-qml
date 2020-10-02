@@ -126,6 +126,7 @@ class QMLItem(pytest.Item):
 
         # Process result
         view.close()
+        view.qmlbot.wait(50)  # wait a little between tests
         res = self.testcase.property("result").toVariant()
         self._handle_result(res)
 
