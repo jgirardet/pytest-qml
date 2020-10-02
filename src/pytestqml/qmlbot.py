@@ -14,6 +14,7 @@ from pytestqml.qt import (
     QVector3D,
     QDateTime,
     QColor,
+    QGuiApplication,
 )
 from pytestqt.qtbot import QtBot
 
@@ -59,6 +60,12 @@ class QmlBot(QObject):
         if isinstance(value, QJSValue):
             value = value.toVariant()
         print(value)
+
+    @Property(int)
+    def dragThreshold(self):
+        app = QGuiApplication.instance()
+        return app.styleHints().startDragDistance()
+        # return app.styleHints().startDragDistance()
 
     @Slot(str, str)
     def addExpectToFail(self, tag: str, message: str):
