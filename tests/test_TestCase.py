@@ -723,14 +723,19 @@ def test_data_driven_init_data(gabarit):
             compare(data.val, 1)
             
         }
+        function test_overide_init_data(){return [{"val":4}]}
+        function test_overide_init(data){
+            compare(data.val, 4)
+        }
     }
     """
     )
-    r.assert_outcomes(passed=1, failed=2)
+    r.assert_outcomes(passed=2, failed=2)
     r.stdout.fnmatch_lines_random(
         [
             "*test_bla_deux FAILED*",
             "*test_bla_un PASSED*",
+            "*test_overide_init_0 PASSED*",
             "*test_bla_2 FAILED*",
         ]
     )
