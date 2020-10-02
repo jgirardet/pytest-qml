@@ -133,3 +133,7 @@ def test_mouseEvent():
 )
 def test_fuzzyCompare(bot, lhs, rhs, delta, res):
     assert bot.fuzzyCompare(lhs, rhs, delta) == res
+
+
+def test_dragThreshold(bot):
+    assert bot.dragThreshold == 10
