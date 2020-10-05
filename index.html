@@ -168,6 +168,11 @@ Item {
 <pre><code class="shell">pytest --skip-qml
 </code></pre>
 
+<p>You can run a single test with the usual <code>Pytest</code> Syntax, except that  <code>TestCase Name</code> 
+and <code>test_function name</code> should be separated by only <strong>only one semi-column</strong>.</p>
+<pre><code class="shell">pytest tests/mytests/mytestfile.tst::MyTestCase:test_my_function
+</code></pre>
+
 <p>Qml logging is shutdown by default since it uses <code>pytest-qt</code> under the hood which captures all qt/qml logging by default.
 To see qml logs add <code>--no-qt-log</code> to pytest's <code>-s</code> option. More info at <a href="https://pytest-qt.readthedocs.io/en/latest/logging.html">pytest-qt</a></p>
 <pre><code class="shell">pytest -s --no-qt-log
@@ -306,7 +311,13 @@ Code parts from PySide2 owning to Qt Company are licensed under the <code>LGPL-3
 <h4 id="unreleased">unreleased</h4>
 <ul>
 <li>New<ul>
-<li>add fuzzyCompare</li>
+<li>added fuzzyCompare, mouseWheel, mouseDrag, warn</li>
+<li>added data-driven tests and init_data support</li>
+<li>added SignalSpy support</li>
+</ul>
+</li>
+<li>Fix<ul>
+<li>running single test</li>
 </ul>
 </li>
 </ul>
@@ -379,5 +390,5 @@ Code parts from PySide2 owning to Qt Company are licensed under the <code>LGPL-3
 
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2020-10-05 08:06:22.637346+00:00
+Build Date UTC : 2020-10-05 21:04:14.927561+00:00
 -->
