@@ -134,7 +134,7 @@ class QMLItem(pytest.Item):
         return (
             self.fspath,
             None,
-            f"{self.parent.name}::{self.name}",
+            f"{self.name}",
         )
 
     def _handle_result(self, result: dict):

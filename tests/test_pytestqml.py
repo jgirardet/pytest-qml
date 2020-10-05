@@ -156,7 +156,7 @@ def test_collect_1_file_1_Case_1_test(testdir):
     testdir.makefile(".qml", tst_BBB=ITEM_1Case_1Test)
     result = testdir.runpytest("--co")
     result.stdout.fnmatch_lines_random(
-        ["collected 1 item", "<QMLFile tst_BBB.qml>", "  <QMLItem TestBla::test_bla>"]
+        ["collected 1 item", "<QMLFile tst_BBB.qml>", "  <QMLItem TestBla:test_bla>"]
     )
 
 
@@ -167,8 +167,8 @@ def test_collect_1_file_1_Case_2_test(testdir):
         [
             "collected 2 items",
             "<QMLFile tst_BBB.qml>",
-            "  <QMLItem TestBla::test_bla>",
-            "  <QMLItem TestBla::test_blabla>",
+            "  <QMLItem TestBla:test_bla>",
+            "  <QMLItem TestBla:test_blabla>",
         ]
     )
 
@@ -180,10 +180,10 @@ def test_collect_1_file_2_Case_4_test(testdir):
         [
             "collected 4 items",
             "<QMLFile tst_BBB.qml>",
-            "  <QMLItem TestBla::test_bla>",
-            "  <QMLItem TestBla::test_blabla>",
-            "  <QMLItem TestBli::test_bli>",
-            "  <QMLItem TestBli::test_blibli>",
+            "  <QMLItem TestBla:test_bla>",
+            "  <QMLItem TestBla:test_blabla>",
+            "  <QMLItem TestBli:test_bli>",
+            "  <QMLItem TestBli:test_blibli>",
         ]
     )
 
@@ -196,13 +196,13 @@ def test_collect_2_file_3_Case_6_test(testdir):
         [
             "collected 6 items",
             "<QMLFile tst_AAA.qml>",
-            "  <QMLItem TestBla::test_bla>",
-            "  <QMLItem TestBla::test_blabla>",
+            "  <QMLItem TestBla:test_bla>",
+            "  <QMLItem TestBla:test_blabla>",
             "<QMLFile tst_BBB.qml>",
-            "  <QMLItem TestBla::test_bla>",
-            "  <QMLItem TestBla::test_blabla>",
-            "  <QMLItem TestBli::test_bli>",
-            "  <QMLItem TestBli::test_blibli>",
+            "  <QMLItem TestBla:test_bla>",
+            "  <QMLItem TestBla:test_blabla>",
+            "  <QMLItem TestBli:test_bli>",
+            "  <QMLItem TestBli:test_blibli>",
         ]
     )
 
