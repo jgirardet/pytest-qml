@@ -101,7 +101,7 @@ class QMLFile(pytest.File):
 
 class QMLItem(pytest.Item):
     def __init__(self, name, parent, testcase):
-        super().__init__(testcase.name + "::" + name, parent)
+        super().__init__(testcase.name + ":" + name, parent)
         self.testname = name
         self.testcase = testcase
         self.add_marker("qmltest")

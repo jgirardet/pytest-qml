@@ -40,10 +40,18 @@ Run pytest. PyTest will collect tests in folder and subfolders like other python
 ```shell
 pytest
 ```
+
 You can tell PyTest to not run qml tests with the option `--skip-qml`.
 ```shell
 pytest --skip-qml
 ```
+
+You can run a single test with the usual `Pytest` Syntax, except that  `TestCase Name` 
+and `test_function name` should be separated by only **only one semi-column**.
+```shell
+pytest tests/mytests/mytestfile.tst::MyTestCase:test_my_function
+```
+
 Qml logging is shutdown by default since it uses `pytest-qt` under the hood which captures all qt/qml logging by default.
 To see qml logs add `--no-qt-log` to pytest's `-s` option. More info at [pytest-qt](https://pytest-qt.readthedocs.io/en/latest/logging.html)
 ```shell
@@ -187,7 +195,11 @@ Thanks to all the contributors helping in this project.
 
 #### unreleased
 - New
-    - add fuzzyCompare
+    - added fuzzyCompare, mouseWheel, mouseDrag, warn
+    - added data-driven tests and init_data support
+    - added SignalSpy support
+- Fix
+    - running single test
 
 #### 0.3.0
 - New
