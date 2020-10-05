@@ -505,6 +505,41 @@ def test_mouse_drag(gabarit):
     r.assert_outcomes(passed=1)
 
 
+def test_mouse_Wheel(gabarit):
+    t, r = gabarit(
+        """
+        Rectangle {
+                x: 10
+                y: 20
+                height: 100
+                width: 100
+            color: "red"
+            MouseArea {
+                id: rec
+                anchors.fill: parent
+                onWheel: {
+                    if (wheel.angleDelta.y > 0)
+                        testcase.wheeled = 1
+                    else if (wheel.angleDelta.y < 0)
+                        testcase.wheeled = 2
+                }
+            }
+        }
+        TestCase {
+            id: testcase
+            property int wheeled:0
+            function test_mmwheel() {
+                mouseWheel(rec, 10, 10, 0, 1)
+                compare(wheeled, 1)
+                mouseWheel(rec, 1, 1, 0, -1)
+                compare(wheeled, 2)
+            }
+        }
+        """
+    )
+    r.assert_outcomes(passed=1)
+
+
 @pytest.mark.parametrize(
     "action, button, modifier, res",
     [

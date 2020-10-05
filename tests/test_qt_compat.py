@@ -18,6 +18,7 @@ def test_qt_api():
     assert qt.QtCore.QEventLoop
     assert qt.QtGui.QColor
     assert qt.QGuiApplication
+    assert qt.QWheelEvent
     assert qt.QtQuick.QQuickView
     assert qt.Property.read
     assert qt.Slot

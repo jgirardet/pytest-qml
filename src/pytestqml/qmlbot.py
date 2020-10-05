@@ -16,6 +16,8 @@ from pytestqml.qt import (
     QDateTime,
     QColor,
     QGuiApplication,
+    QWheelEvent,
+    QPointF,
 )
 from pytestqt.qtbot import QtBot
 
@@ -149,6 +151,30 @@ class QmlBot(QObject):
             modifiers = Qt.KeyboardModifier(modifiers)
             button = Qt.MouseButton(button)
             getattr(QTest, action)(self.view, button, modifiers, point, delay)
+
+    @Slot(QPointF, QPointF, QPoint, int, int, int)
+    def mouseWheel(self, pos, globalPos, angleDelta, buttons, modifiers, delay):
+        modifiers = Qt.KeyboardModifier(modifiers)
+        buttons = Qt.MouseButton(buttons)
+        pixelDelta = QPoint()
+        phase = Qt.NoScrollPhase
+        inverted = False
+        source = Qt.MouseEventNotSynthesized
+
+        event = QWheelEvent(
+            pos,
+            globalPos,
+            pixelDelta,
+            angleDelta,
+            buttons,
+            modifiers,
+            phase,
+            inverted,
+            source,
+        )
+        self.view.wheelEvent(event)
+        if delay > 0:
+            self.wait(delay)
 
     @Slot(str, int, int, int)
     def keyEvent(

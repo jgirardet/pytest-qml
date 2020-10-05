@@ -71,9 +71,6 @@ class TestView(QQuickView):
         for k, v in self.ctx_prop[0].items():
             self.rootContext().setContextProperty(k, v)
 
-    # def keyPressEvent(self, e):
-    #     breakpoint()
-
 
 class QMLFile(pytest.File):
     def __init__(self, fspath, parent):

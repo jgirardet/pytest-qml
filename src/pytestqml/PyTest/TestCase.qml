@@ -629,6 +629,27 @@ Bellow this line you can find the QtTest PublicAPI
             qmlbot.mouseEvent("mouseRelease", point, button, modifiers, delay)
     }
 
+    /*
+        MouseWheel
+    */
+    function mouseWheel(item, x, y, xDelta, yDelta, buttons, modifiers, delay) {
+        qtest_verifyItem(item, "mouseWheel")
+        if (delay == undefined)
+            delay = -1
+        if (buttons == undefined)
+            buttons = Qt.NoButton
+        if (modifiers === undefined)
+            modifiers = Qt.NoModifier
+        if (xDelta == undefined)
+            xDelta = 0
+        if (yDelta == undefined)
+            yDelta = 0
+        let pos = item.mapToItem(Window.contentItem, x, y)
+        let globalPos = item.mapToGlobal(x, y)
+        let delta = Qt.point(xDelta, yDelta)
+        qmlbot.mouseWheel(pos, globalPos, delta, buttons, modifiers, delay)
+   }
+
 
     /*
         Skip the current test
