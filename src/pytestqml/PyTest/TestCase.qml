@@ -518,7 +518,7 @@ Bellow this line you can find the QtTest PublicAPI
         mouseDoubleClickSequence
     */
     function mouseDoubleClickSequence(item, x, y, button, modifiers, delay) {
-            qtest_verifyItem(item, "mouseDrag")
+            qtest_verifyItem(item, "mouseDoubleClickSequence")
             if (button === undefined)
             button = Qt.LeftButton
             if (modifiers === undefined)
