@@ -53,7 +53,8 @@ class CompareError extends PyTestError {
            function oneParam(param) {
                 if (typeof param == "string")
                     param =  `"${param}"`
-
+                else if (typeof param == "object")
+                    param =  JSON.stringify(param)
                 return param
 
            }

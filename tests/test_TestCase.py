@@ -83,6 +83,18 @@ Item {
     result.assert_outcomes(passed=1)
 
 
+@pytest.mark.parametrize(
+    "equality, message",
+    [
+        ("""compare("a","b")""", '''"a" != "b"'''),
+        ("""compare({"a":1},{"c":2})""", """{"a":1} != {"c":2}"""),
+    ],
+)
+def test_error_message(equality, message, file1cas1test1):
+    t, r = file1cas1test1(equality, "-vv", "-s")
+    r.stdout.fnmatch_lines_random([f"*{message}*"])
+
+
 # def test_compare_without_raise(file1cas1test1):
 #
 #     t, r = file1cas1test1(
