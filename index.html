@@ -140,15 +140,14 @@
 <p>This PyTest plugin allows you to run qml tests via pytest 
 instead of the C++/QtQuick test runner. It supports both PySide2 and PyQt5 &gt;= 5.14.2 .</p>
 <h2 id="installation">Installation</h2>
-<pre><code class="shell">pip install pytest-qml
+<pre><code class="language-shell">pip install pytest-qml
 </code></pre>
-
 <h2 id="usage">Usage</h2>
 <p>Pytest-qml aims to be fully compatible with <a href="https://doc.qt.io/qt-5/qtquicktest-index.html#executing-c-before-qml-tests">Qt Quick Test</a> public api except using a 
 custom <code>TestCase</code> importing <code>import PyTest 1.0</code> instead of <code>import QtTest 1.2</code>.
 We  are aiming  to make it pass QtTest test suite. You can follow it at <a href="https://github.com/jgirardet/pytest-qml/issues/2">issue 2</a>.
 Already implemented Features, properties and methods can be found at <a href="https://github.com/jgirardet/pytest-qml/issues/1">issue 1</a>.</p>
-<pre><code class="qml">import QtQuick 2.0
+<pre><code class="language-qml">import QtQuick 2.0
 import PyTest 1.0
 
 Item {
@@ -159,86 +158,75 @@ Item {
     }                            
 }
 </code></pre>
-
 <p>Run pytest. PyTest will collect tests in folder and subfolders like other python tests.</p>
-<pre><code class="shell">pytest
+<pre><code class="language-shell">pytest
 </code></pre>
-
 <p>You can tell PyTest to not run qml tests with the option <code>--skip-qml</code>.</p>
-<pre><code class="shell">pytest --skip-qml
+<pre><code class="language-shell">pytest --skip-qml
 </code></pre>
-
 <p>You can run a single test with the usual <code>Pytest</code> Syntax, except that  <code>TestCase Name</code> 
 and <code>test_function name</code> should be separated by only <strong>only one semi-column</strong>.</p>
-<pre><code class="shell">pytest tests/mytests/mytestfile.tst::MyTestCase:test_my_function
+<pre><code class="language-shell">pytest tests/mytests/mytestfile.tst::MyTestCase:test_my_function
 </code></pre>
-
 <p>Qml logging is shutdown by default since it uses <code>pytest-qt</code> under the hood which captures all qt/qml logging by default.
 To see qml logs add <code>--no-qt-log</code> to pytest's <code>-s</code> option. More info at <a href="https://pytest-qt.readthedocs.io/en/latest/logging.html">pytest-qt</a></p>
-<pre><code class="shell">pytest -s --no-qt-log
+<pre><code class="language-shell">pytest -s --no-qt-log
 </code></pre>
-
 <h2 id="executing-python-code-before-qml-tests">Executing Python code before QML Tests</h2>
 <p>This is done using <a href="https://docs.pytest.org/en/stable/writing_plugins.html#writing-hook-functions">pytest's hook system</a>.
 Pytest-qml add's the following custom hooks:</p>
 <h3 id="pytest_qml_applicationavailable">pytest_qml_applicationAvailable</h3>
 <p>Same thing like C++ <code>applicationAvailable</code>, except an <code>app</code> parameter provided for convenience.</p>
-<pre><code class="python"># conftest.py
+<pre><code class="language-python"># conftest.py
 def pytest_qml_applicationAvailable(app):
     app.setApplicationName(&quot;Cool App&quot;)
 </code></pre>
-
 <h3 id="pytest_qml_qmlengineavailable">pytest_qml_qmlEngineAvailable</h3>
 <p>Same thing like C++ <code>qmlEngineAvailable</code>.</p>
-<pre><code class="python">def pytest_qml_qmlEngineAvailable(engine):
+<pre><code class="language-python">def pytest_qml_qmlEngineAvailable(engine):
         engine.addImportPath(&quot;/some/path&quot;)
 </code></pre>
-
 <h5 id="about-setting-a-contextproperty">about setting a ContextProperty</h5>
 <p>Objects added with <code>engine.rootContext.setContextProperty("name", obj)</code> need to 
 stay referenced somewhere and not be garbage collected. The following code will
 not work:</p>
-<pre><code class="python"># conftest.py
+<pre><code class="language-python"># conftest.py
 def pytest_qml_qmlEngineAvailable(engine):
         engine.rootContext().setContextProperty(&quot;name&quot;, SomeObject())
         # ====&gt; fail:  SomeObject() is garbage collected    
 
 </code></pre>
-
 <p>To accomplish it there are various poosiblities:</p>
 <ul>
 <li>Instantiate the object inside <code>conftest.py</code> file, it will exist during the whole test session:</li>
 </ul>
-<pre><code class="python"># conftest.py
+<pre><code class="language-python"># conftest.py
 obj = SomeObj()
 def pytest_qml_qmlEngineAvailable(engine):
         engine.rootContext().setContextProperty(&quot;name&quot;, obj)
 </code></pre>
-
 <ul>
 <li>add the object as attribute of engine, it will exists for the whole test file:</li>
 </ul>
-<pre><code class="python">#conftest.py
+<pre><code class="language-python">#conftest.py
 def pytest_qml_qmlEngineAvailable(engine):
         engine.cp = SomeObject()
         engine.rootContext().setContextProperty(&quot;name&quot;, engine.cp)
 
 </code></pre>
-
 <ul>
 <li>use the hook  <a href="pytest_qml_context_properties">pytest_qml_context_properties</a></li>
 </ul>
 <h3 id="pytest_qml_context_properties">pytest_qml_context_properties</h3>
 <p>This a convenience hook to register contextProperties. ContextProperty  will exist for the
 whole test file. It takes no parameter and returns a dict.</p>
-<pre><code class="python"># contest.py
+<pre><code class="language-python"># contest.py
 def pytest_qml_context_properties():
         return {&quot;cp&quot;:Cp()}
 </code></pre>
-
 <h3 id="resistering-new-types">Resistering new types</h3>
 <p>This can be done inside <code>conftest.py</code> or in the <code>pytest_configure</code> hook:</p>
-<pre><code class="python"># conftest.py
+<pre><code class="language-python"># conftest.py
 
 qmlRegisterType(MyObj, &quot;MyType&quot;, 1, 0, &quot;MyObj&quot;)
 
@@ -247,10 +235,9 @@ def pytest_configure():
     qmlRegisterType(MyObj, &quot;MyType&quot;, 1, 0, &quot;MyObj&quot;)
 
 </code></pre>
-
 <h3 id="using-qt-qrc-file">Using Qt .qrc file</h3>
 <p>This can be done inside <code>conftest.py</code> or in the <code>pytest_sessionstart</code> hook:</p>
-<pre><code class="python"># conftest.py
+<pre><code class="language-python"># conftest.py
 
 from package import ressources.qrc
 
@@ -258,7 +245,6 @@ from package import ressources.qrc
 def pytest_sessionstart():
     from package import ressources.qrc
 </code></pre>
-
 <h2 id="issues">Issues</h2>
 <p>If you encounter any problems, please <a href="https://github.com/jgirardet/pytest-qml/issues/new/choose">fill an issue</a> along with a detailed description.</p>
 <h2 id="contributing">Contributing</h2>
@@ -269,30 +255,26 @@ to see what  still need to be done.</p>
 <ul>
 <li>clone the repo and go inside</li>
 </ul>
-<pre><code class="shell">git clone https://github.com/jgirardet/pytest-qml
+<pre><code class="language-shell">git clone https://github.com/jgirardet/pytest-qml
 cd pytest-qml
 </code></pre>
-
 <ul>
 <li>create a virtual env and activate it</li>
 </ul>
-<pre><code class="shell">python3 -m venv myenv
+<pre><code class="language-shell">python3 -m venv myenv
 source myenv/bin/activate
 </code></pre>
-
 <ul>
 <li>update pip and install requirements</li>
 </ul>
-<pre><code class="shell">pip install -U pip
+<pre><code class="language-shell">pip install -U pip
 pip install -r requirements.txt
 </code></pre>
-
 <ul>
 <li>install pre-commit hook (we use black)</li>
 </ul>
-<pre><code class="shell">pre-commit install
+<pre><code class="language-shell">pre-commit install
 </code></pre>
-
 <ul>
 <li>make your changes</li>
 <li>add your name to contributor</li>
@@ -390,5 +372,5 @@ Code parts from PySide2 owning to Qt Company are licensed under the <code>LGPL-3
 
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2020-10-06 07:45:54.055465+00:00
+Build Date UTC : 2020-10-07 17:47:54.758839+00:00
 -->
