@@ -200,6 +200,7 @@ Thanks to all the contributors helping in this project.
     - added SignalSpy support
 - Fix
     - running single test
+    - nicer output of `object` CompareError
 
 #### 0.3.0
 - New

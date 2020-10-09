@@ -4,7 +4,7 @@
 ****************************************************************************/
 
 import QtQuick 2.0
-import "utils.mjs" as U
+import "errors.mjs" as Err
 import PyTest 1.0
 
 
@@ -102,7 +102,7 @@ Item {
         }
         var success = (qtest_count >= expected)
         if (!success)
-            throw new U.PyTestError(`signal ${signalName} emitted ${qtest_count} times but ${expected}  was expected`)
+            throw new Err.PyTestError(`signal ${signalName} emitted ${qtest_count} times but ${expected}  was expected`)
 //        if (!qtest_results.verify(success, "wait for signal " + signalName, util.callerFile(), util.callerLine()))
 //            throw new Error("QtQuickTest::fail")
     }
@@ -177,4 +177,5 @@ Item {
             return sn
         return "on" + sn.substr(0, 1).toUpperCase() + sn.substr(1)
     }
+
 }

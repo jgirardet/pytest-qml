@@ -1,21 +1,5 @@
-// function CompareError(lhs, rhs, message="") {
-//   this.name = "CompareError";
-//   this.message = _compareFormatError(actual, expected) + "\n"  +  message;
-//
-//   function _compareFormatError(actual, expected) {
-//
-//            function oneParam(param) {
-//                 if (typeof param == "string")
-//                     param =  `"${param}"`
-//
-//                 return param
-//
-//            }
-//            let res =  `${oneParam(actual)} != ${oneParam(expected)}`
-//            return res
-//
-//     }
-// }
+import * as Qtest from 'qtest.mjs';
+
 class PyTestError extends Error {
   constructor(message, extra={}) {
         super(message);
@@ -51,10 +35,11 @@ class CompareError extends PyTestError {
   }
   _compareFormatError() {
            function oneParam(param) {
-                if (typeof param == "string")
+                if (Qtest.qtest_typeof(param) === "string")
                     param =  `"${param}"`
-                else if (typeof param == "object")
-                    param =  JSON.stringify(param)
+                else if (Qtest.qtest_typeof(param) == "object")
+                    //we use qtest_typeof to avoid hang on on stringify with declarativeitem
+                   param =  JSON.stringify(param)
                 return param
 
            }
