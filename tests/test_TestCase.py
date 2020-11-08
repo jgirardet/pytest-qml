@@ -372,6 +372,20 @@ def test_createTemporaryObjects(file1cas1test1):
     r.assert_outcomes(passed=1)
 
 
+def test_createTemporaryQmlObjects(file1cas1test1):
+    # var obj = createTemporaryQmlObject(comp, parent, {"height":3});
+    t, r = file1cas1test1(
+        """
+    var comp = `import QtQuick 2.0; Rectangle {color:"red"}`
+    var obj = createTemporaryQmlObject(comp, itemroot ,"aaa");
+    fuzzyCompare(obj.color,"red",0)
+    """,
+        run=False,
+    )
+    r = t.runpytest("-s")
+    r.assert_outcomes(passed=1)
+
+
 @pytest.mark.parametrize(
     "action, mx, my, button, modifier, res",
     [

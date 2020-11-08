@@ -218,6 +218,27 @@ Bellow this line you can find the QtTest PublicAPI
       return obj
     }
 
+    /*
+        createTemporaryObject
+    */
+    function createTemporaryQmlObject(qml, parent, filePath) {
+        if (typeof qml !== "string") {
+            throw new Err.PytestError("First argument must be a string of QML; actual type is " + typeof qml)
+        }
+
+        if (!parent || typeof parent !== "object") {
+            throw new Err.PytestError("Second argument must be a valid parent object; actual type is " + typeof parent)
+        }
+
+        if (filePath !== undefined && typeof filePath !== "string") {
+            throw new Err.PytestError("Third argument must be a file path string; actual type is " + typeof filePath)
+        }
+
+        var object = Qt.createQmlObject(qml, parent, filePath);
+        temporaryObjects.push(object);
+        return object;
+    }
+
 
    /*
        fail the current test with msg
