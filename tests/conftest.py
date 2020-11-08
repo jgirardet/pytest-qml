@@ -12,6 +12,7 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import PyTest 1.0
 Item {
+    id: itemroot
     height: 300
     width: 300
     TestCase {

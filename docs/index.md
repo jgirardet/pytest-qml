@@ -198,6 +198,7 @@ Thanks to all the contributors helping in this project.
     - added fuzzyCompare, mouseWheel, mouseDrag, warn
     - added data-driven tests and init_data support
     - added SignalSpy support
+    - added createTemporayQmlObject
 - Fix
     - running single test
     - nicer output of `object` CompareError
