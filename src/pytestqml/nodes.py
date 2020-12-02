@@ -122,8 +122,10 @@ class QMLItem(pytest.Item):
             self.testcase.setProperty("testToRun", self.testname)
 
         # Process result
-        view.close()
+        for win in view.app.allWindows():
+            win.close()
         view.qmlbot.wait(50)  # wait a little between tests
+
         res = self.testcase.property("result").toVariant()
         self._handle_result(res)
 

@@ -411,7 +411,7 @@ def test_createTemporaryQmlObjects(file1cas1test1):
             "Qt.NoModifier",
             '"leftRleftR"',
         ),
-        # ("mousePress", "2", "2", "Qt.LeftButton", '""'),
+        ("mousePress", "2", "2", "Qt.LeftButton", '""', '""'),
     ],
 )
 def test_mouse(gabarit, action, mx, my, button, modifier, res):
@@ -459,6 +459,91 @@ def test_mouse(gabarit, action, mx, my, button, modifier, res):
     r.assert_outcomes(passed=1)
 
 
+@pytest.mark.parametrize(
+    "action, mx, my, button, modifier, res",
+    [
+        ("mousePress", "0", "0", "Qt.LeftButton", "Qt.NoModifier", '"left"'),
+        ("mousePress", "0", "0", "Qt.LeftButton", "Qt.NoModifier", '"left"'),
+        ("mousePress", "2", "2", "Qt.LeftButton", "Qt.NoModifier", '""'),
+        ("mousePress", "0", "0", "Qt.RightButton", "Qt.NoModifier", '"right"'),
+        (
+            "mousePress",
+            "0",
+            "0",
+            "Qt.RightButton",
+            "Qt.NoModifier",
+            '"right"',
+        ),  # double to check release button
+        ("mousePress", "0", "0", "Qt.LeftButton", "Qt.ControlModifier", '"ctrlleft"'),
+        ("mouseClick", "0", "0", "Qt.LeftButton", "Qt.NoModifier", '"leftR"'),
+        (
+            "mouseDoubleClickSequence",
+            "0",
+            "0",
+            "Qt.LeftButton",
+            "Qt.NoModifier",
+            '"leftRleftR"',
+        ),
+        ("mousePress", "2", "2", "Qt.LeftButton", '""', '""'),
+    ],
+)
+def test_mouse_popup(gabarit, action, mx, my, button, modifier, res):
+    content = Template(
+        """
+    TestCase {
+        name: "TestMouse"
+        when: windowShown
+        function test_mouse(){
+            popup.show()
+            tryCompare(popup, "visible", true)
+            button.text = ""
+            print(button.text)
+            ${action}(mousearea, ${mx},${my}, ${button},${modifier})
+            print(button.text)
+            compare(button.text,${res})
+        }
+    }
+    Button {id:button; x:0 ;y:0 ;height:50; width:50; text:""}
+    Window {
+        id: popup
+        height: 1
+        width: 1
+        x: 500
+        y: 500
+            MouseArea {
+            anchors.fill:parent
+            id: mousearea
+            acceptedButtons: Qt.AllButtons
+            onPressed: {
+                if (mouse.button == Qt.LeftButton) {
+                    if (mouse.modifiers & Qt.ControlModifier) {
+    
+                    button.text=button.text +"ctrl"
+                    }
+                    button.text=button.text +"left"
+                } else if (mouse.button == Qt.RightButton) {
+                    button.text = button.text + "right"
+                } else {
+                    button.text = button.text + "other"
+                    }
+            }
+            onReleased: {
+                button.text = button.text + "R"
+            }
+        }
+    }
+    
+    """
+    )
+    t, r = gabarit(
+        content.substitute(
+            action=action, mx=mx, my=my, button=button, modifier=modifier, res=res
+        ),
+        "-vv",
+    )
+    r.assert_outcomes(passed=1)
+
+
 def test_mouse_release(gabarit):
     t, r = gabarit(
         """
@@ -468,6 +553,31 @@ def test_mouse_release(gabarit):
     TestCase {
         name: "TestBla"
         function test_release() {
+            mousePress(button)
+            compare(button.pressed, true)
+            mouseRelease(button)
+            compare(button.pressed, false)
+        }
+    }
+    """
+    )
+    r.assert_outcomes(passed=1)
+
+
+def test_mouse_release_popup(gabarit):
+    t, r = gabarit(
+        """
+    Window{
+        id: popup
+        Button {
+            id: button
+        }
+    }    
+    TestCase {
+        name: "TestBla"
+        function test_release() {
+            popup.show()
+            tryCompare(popup, "visible", true)
             mousePress(button)
             compare(button.pressed, true)
             mouseRelease(button)
@@ -491,6 +601,33 @@ def test_mouse_move(gabarit):
     TestCase {
         name: "TestBla"
         function test_move() {
+            mouseMove(area, 62, 70)
+            compare(area.mouseX, 62)
+            compare(area.mouseY, 70)
+        }
+    }
+    """
+    )
+    r.assert_outcomes(passed=1)
+
+
+def test_mouse_move_popup(gabarit):
+    t, r = gabarit(
+        """
+    Window {
+        id: popup
+        MouseArea {
+            id: area
+            hoverEnabled: true
+            height: 100
+            width: 100
+        }
+    }
+    TestCase {
+        name: "TestBla"
+        function test_move() {
+            popup.show()
+            tryCompare(popup, "visible", true)
             mouseMove(area, 62, 70)
             compare(area.mouseX, 62)
             compare(area.mouseY, 70)
@@ -531,6 +668,41 @@ def test_mouse_drag(gabarit):
     r.assert_outcomes(passed=1)
 
 
+def test_mouse_drag_popup(gabarit):
+    t, r = gabarit(
+        """
+    Window {
+        id: popup
+        Rectangle {
+        id: rec
+        height: 50
+        width: 50
+        color: "red"
+        MouseArea {
+            id: area
+            anchors.fill:parent
+            drag.target: rec
+        }
+        }
+    }
+    TestCase {
+        function init() {
+            rec.x = 40
+            rec.y=30
+        }
+        function test_drag() {
+            popup.show()
+            tryCompare(popup, "visible", true)
+            mouseDrag(rec, 1,1,20,20)
+            compare(rec.x,40 + 20 - qmlbot.dragThreshold - 1) 
+            compare(rec.y, 30 +20 - qmlbot.dragThreshold - 1) 
+        }
+    }
+    """
+    )
+    r.assert_outcomes(passed=1)
+
+
 def test_mouse_Wheel(gabarit):
     t, r = gabarit(
         """
@@ -555,6 +727,46 @@ def test_mouse_Wheel(gabarit):
             id: testcase
             property int wheeled:0
             function test_mmwheel() {
+                mouseWheel(rec, 10, 10, 0, 1)
+                compare(wheeled, 1)
+                mouseWheel(rec, 1, 1, 0, -1)
+                compare(wheeled, 2)
+            }
+        }
+        """
+    )
+    r.assert_outcomes(passed=1)
+
+
+def test_mouse_Wheel_popup(gabarit):
+    t, r = gabarit(
+        """
+        Window {
+            id: popup
+            Rectangle {
+                    x: 10
+                    y: 20
+                    height: 100
+                    width: 100
+                color: "red"
+                MouseArea {
+                    id: rec
+                    anchors.fill: parent
+                    onWheel: {
+                        if (wheel.angleDelta.y > 0)
+                            testcase.wheeled = 1
+                        else if (wheel.angleDelta.y < 0)
+                            testcase.wheeled = 2
+                    }
+                }
+            }
+        }
+        TestCase {
+            id: testcase
+            property int wheeled:0
+            function test_mmwheel() {
+                popup.show()
+                tryCompare(popup, "visible", true)
                 mouseWheel(rec, 10, 10, 0, 1)
                 compare(wheeled, 1)
                 mouseWheel(rec, 1, 1, 0, -1)
@@ -612,6 +824,80 @@ def test_keyboard(gabarit, action, button, modifier, res):
                 if (event.modifiers ==  Qt.ControlModifier) {
                     text=text + "R"} 
                 else {text = text + "r"}
+            }
+        }
+    }
+    """
+    )
+    t, r = gabarit(
+        content.substitute(action=action, button=button, modifier=modifier, res=res),
+        "-s",
+        "-vv",
+    )
+    r.assert_outcomes(passed=2)
+
+
+@pytest.mark.parametrize(
+    "action, button, modifier, res",
+    [
+        ("keyClick", "Qt.Key_A", "Qt.NoModifier", "ar"),
+        ("keyClick", "Qt.Key_A", "Qt.ControlModifier", "AR"),
+        ("keyPress", "Qt.Key_A", "Qt.NoModifier", "a"),
+        ("keyPress", "Qt.Key_A", "Qt.ControlModifier", "A"),
+        ("keyRelease", "Qt.Key_A", "Qt.ControlModifier", "R"),
+        ("keyRelease", "Qt.Key_A", "Qt.NoModifier", "r"),
+        ("keySequence", '"a,a"', "Qt.NoModifier", "arar"),
+    ],
+)
+def test_keyboard_popup(gabarit, action, button, modifier, res):
+    content = Template(
+        """
+    TestCase {
+        name: "TestKeyboard"
+        when: windowShown
+        function init() {
+            popup.show()
+            popup.requestActivate()
+            wait(50)
+            tryCompare(popup, "active", true)
+            tryCompare(popup, "activeFocusItem", textarea)
+        }
+        function test_keyboard(){
+            textarea.forceActiveFocus() // neededon CI
+            textarea.text = ""
+            ${action}(${button},${modifier})
+            compare(textarea.text,"${res}")
+        }
+        function test_keyboard2(){ 
+            // we can press an already pressed key != not the case for mouse button
+            textarea.forceActiveFocus() // needed on CI
+            ${action}(${button},${modifier})
+            compare(textarea.text,"${res}${res}")
+        }
+    }
+    Window {
+        id: popup
+        height: 300
+        width: 300
+        Text {
+            height: 50
+            width: 100
+            id: textarea
+            text: ""
+            focus:true
+            Keys.onPressed: {
+               if (event.key == Qt.Key_A) {
+                    if (event.modifiers ==  Qt.ControlModifier) {
+                        text=text + "A"} 
+                    else {text = text + "a"}
+                }
+            }
+            Keys.onReleased: {
+                if (event.key == Qt.Key_A) {
+                    if (event.modifiers ==  Qt.ControlModifier) {
+                        text=text + "R"} 
+                    else {text = text + "r"}
+                }
             }
         }
     }

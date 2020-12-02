@@ -374,8 +374,8 @@ Bellow this line you can find the QtTest PublicAPI
                 x = item.width / 2
             if (y === undefined)
                 y = item.height / 2
-            let point = item.mapToItem(Window.contentItem, x, y)
-            qmlbot.mouseEvent("mouseClick", point, button, modifiers, delay)
+            let [point, rootitem] = _getCoordInWindow(item,x, y)
+            qmlbot.mouseEvent("mouseClick", point, button, modifiers, delay, rootitem)
     }
     /*
         mouseDoubleClickSequence
@@ -392,8 +392,8 @@ Bellow this line you can find the QtTest PublicAPI
                 x = item.width / 2
             if (y === undefined)
                 y = item.height / 2
-            let point = item.mapToItem(Window.contentItem, x, y)
-            qmlbot.mouseEvent("mouseDClick", point, button, modifiers, delay)
+            let [point, rootitem] = _getCoordInWindow(item,x, y)
+            qmlbot.mouseEvent("mouseDClick", point, button, modifiers, delay, rootitem)
     }
 
     /*
@@ -449,8 +449,8 @@ Bellow this line you can find the QtTest PublicAPI
                 delay = -1
             if (buttons == undefined)
                 buttons = Qt.NoButton
-            let point = item.mapToItem(Window.contentItem, x, y)
-            qmlbot.mouseEvent("mouseMove", point, buttons, Qt.NoModifier, delay)
+            let [point, rootitem] = _getCoordInWindow(item,x, y)
+            qmlbot.mouseEvent("mouseMove", point, buttons, Qt.NoModifier, delay, rootitem)
     }
 
     /*
@@ -468,8 +468,9 @@ Bellow this line you can find the QtTest PublicAPI
                 x = item.width / 2
             if (y === undefined)
                 y = item.height / 2
-            let point = item.mapToItem(Window.contentItem, x, y)
-            qmlbot.mouseEvent("mousePress", point, button, modifiers, delay)
+                print(Window.contentItem)
+            let [point, rootitem] = _getCoordInWindow(item,x, y)
+            qmlbot.mouseEvent("mousePress", point, button, modifiers, delay, rootitem)
     }
 
 
@@ -488,8 +489,8 @@ Bellow this line you can find the QtTest PublicAPI
                 x = item.width / 2
             if (y === undefined)
                 y = item.height / 2
-            let point = item.mapToItem(Window.contentItem, x, y)
-            qmlbot.mouseEvent("mouseRelease", point, button, modifiers, delay)
+            let [point, rootitem] = _getCoordInWindow(item,x, y)
+            qmlbot.mouseEvent("mouseRelease", point, button, modifiers, delay, rootitem)
     }
 
     /*
@@ -507,10 +508,10 @@ Bellow this line you can find the QtTest PublicAPI
             xDelta = 0
         if (yDelta == undefined)
             yDelta = 0
-        let pos = item.mapToItem(Window.contentItem, x, y)
+        let [pos, rootitem] = _getCoordInWindow(item,x, y)
         let globalPos = item.mapToGlobal(x, y)
         let delta = Qt.point(xDelta, yDelta)
-        qmlbot.mouseWheel(pos, globalPos, delta, buttons, modifiers, delay)
+        qmlbot.mouseWheel(pos, globalPos, delta, buttons, modifiers, delay, rootitem)
    }
 
 
@@ -612,7 +613,24 @@ Bellow this line you can find the QtTest PublicAPI
         initTestCase()
      }
 
+    function _findRootItem(item) {
+      let p = item
+      while (true) {
+                if (p.parent)
+                   p = p.parent
+                else
+                   break;
+            }
+      return p
+   }
 
+
+   function _getCoordInWindow(item, x, y) {
+        let rootitem = _findRootItem(item)
+        let point = item.mapToItem(rootitem, x, y)
+        return [point, rootitem]
+
+   }
 
     function qtest_compareInternal(act,exp) {
         // needed by qttestsuite

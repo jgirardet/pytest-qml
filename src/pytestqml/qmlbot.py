@@ -18,6 +18,7 @@ from pytestqml.qt import (
     QGuiApplication,
     QWheelEvent,
     QPointF,
+    QWindow,
 )
 from pytestqt.qtbot import QtBot
 
@@ -140,20 +141,35 @@ class QmlBot(QObject):
             )
         return False
 
-    @Slot(str, QPoint, int, int, int)
+    @Slot(str, QPoint, int, int, int, QObject)
     def mouseEvent(
-        self, action: str, point: QPoint, button: int, modifiers: int, delay: int
+        self,
+        action: str,
+        point: QPoint,
+        button: int,
+        modifiers: int,
+        delay: int,
+        rootitem: QObject,
     ):
+        window = self._get_window(rootitem)
+        if not window:
+            raise ValueError("no window found for this element")
         if action == "mouseMove":
-            QTest.mouseMove(self.view, point, delay)
+            QTest.mouseMove(window, point, delay)
         else:
             # Conversion needed for pyqt5/pyside2 compat
             modifiers = Qt.KeyboardModifier(modifiers)
             button = Qt.MouseButton(button)
-            getattr(QTest, action)(self.view, button, modifiers, point, delay)
+            getattr(QTest, action)(window, button, modifiers, point, delay)
 
-    @Slot(QPointF, QPointF, QPoint, int, int, int)
-    def mouseWheel(self, pos, globalPos, angleDelta, buttons, modifiers, delay):
+    @Slot(QPointF, QPointF, QPoint, int, int, int, QObject)
+    def mouseWheel(
+        self, pos, globalPos, angleDelta, buttons, modifiers, delay, rootitem: QObject
+    ):
+
+        window = self._get_window(rootitem)
+        if not window:
+            raise ValueError("no window found for this element")
         modifiers = Qt.KeyboardModifier(modifiers)
         buttons = Qt.MouseButton(buttons)
         pixelDelta = QPoint()
@@ -172,9 +188,10 @@ class QmlBot(QObject):
             inverted,
             source,
         )
-        self.view.wheelEvent(event)
         if delay > 0:
             self.wait(delay)
+        QGuiApplication.instance().postEvent(window, event)
+        QGuiApplication.instance().processEvents()
 
     @Slot(str, int, int, int)
     def keyEvent(
@@ -188,11 +205,13 @@ class QmlBot(QObject):
         # print(modifiers)
         key = Qt.Key(key)
         modifiers = Qt.KeyboardModifiers(modifiers)
-        getattr(QTest, action)(self.view, key, modifiers, delay)
+        window = self.view.app.focusWindow() or self.view
+        getattr(QTest, action)(window, key, modifiers, delay)
 
     @Slot(str)
     def keySequence(self, seq: str):
-        QTest.keySequence(self.view, QKeySequence(seq))
+        window = self.view.app.focusWindow() or self.view
+        QTest.keySequence(window, QKeySequence(seq))
 
     windowShownChanged = Signal()
 
@@ -256,6 +275,10 @@ class QmlBot(QObject):
     #     window = self.engine.rootObjects()[0]
     #     QTest.mousePress(window, Qt.LeftButton, Qt.NoModifier, QPoint(20, 10), 0)
     # def _track_key(self, key):
+    def _get_window(self, rootitem: QObject) -> QWindow:
+        for win in self.view.app.allWindows():
+            if win.contentItem() == rootitem:
+                return win
 
 
 class QMLWarning(UserWarning):
