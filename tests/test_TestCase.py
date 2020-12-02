@@ -837,6 +837,80 @@ def test_keyboard(gabarit, action, button, modifier, res):
     r.assert_outcomes(passed=2)
 
 
+@pytest.mark.parametrize(
+    "action, button, modifier, res",
+    [
+        ("keyClick", "Qt.Key_A", "Qt.NoModifier", "ar"),
+        ("keyClick", "Qt.Key_A", "Qt.ControlModifier", "AR"),
+        ("keyPress", "Qt.Key_A", "Qt.NoModifier", "a"),
+        ("keyPress", "Qt.Key_A", "Qt.ControlModifier", "A"),
+        ("keyRelease", "Qt.Key_A", "Qt.ControlModifier", "R"),
+        ("keyRelease", "Qt.Key_A", "Qt.NoModifier", "r"),
+        ("keySequence", '"a,a"', "Qt.NoModifier", "arar"),
+    ],
+)
+def test_keyboard_popup(gabarit, action, button, modifier, res):
+    content = Template(
+        """
+    TestCase {
+        name: "TestKeyboard"
+        when: windowShown
+        function init() {
+            popup.show()
+            popup.requestActivate()
+            wait(50)
+            tryCompare(popup, "active", true)
+            tryCompare(popup, "activeFocusItem", textarea)
+        }
+        function test_keyboard(){
+            textarea.forceActiveFocus() // neededon CI
+            textarea.text = ""
+            ${action}(${button},${modifier})
+            compare(textarea.text,"${res}")
+        }
+        function test_keyboard2(){ 
+            // we can press an already pressed key != not the case for mouse button
+            textarea.forceActiveFocus() // needed on CI
+            ${action}(${button},${modifier})
+            compare(textarea.text,"${res}${res}")
+        }
+    }
+    Window {
+        id: popup
+        height: 300
+        width: 300
+        Text {
+            height: 50
+            width: 100
+            id: textarea
+            text: ""
+            focus:true
+            Keys.onPressed: {
+               if (event.key == Qt.Key_A) {
+                    if (event.modifiers ==  Qt.ControlModifier) {
+                        text=text + "A"} 
+                    else {text = text + "a"}
+                }
+            }
+            Keys.onReleased: {
+                if (event.key == Qt.Key_A) {
+                    if (event.modifiers ==  Qt.ControlModifier) {
+                        text=text + "R"} 
+                    else {text = text + "r"}
+                }
+            }
+        }
+    }
+    """
+    )
+    t, r = gabarit(
+        content.substitute(action=action, button=button, modifier=modifier, res=res),
+        "-s",
+        "-vv",
+    )
+    r.assert_outcomes(passed=2)
+
+
 def test_expect_fail_fail(file1cas1test1):
     t, r = file1cas1test1(
         """
