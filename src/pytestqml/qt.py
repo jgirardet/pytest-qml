@@ -43,6 +43,7 @@ QGuiApplication = QtGui.QGuiApplication
 QKeySequence = QtGui.QKeySequence
 QVector3D = QtGui.QVector3D
 QWheelEvent = QtGui.QWheelEvent
+QWindow = QtGui.QWindow
 
 # QtQuick
 QQuickView = QtQuick.QQuickView
