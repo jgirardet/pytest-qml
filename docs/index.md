@@ -193,7 +193,7 @@ Thanks to all the contributors helping in this project.
 
 ## Changelog
 
-#### unreleased
+#### 0.4.0
 - New
     - added fuzzyCompare, mouseWheel, mouseDrag, warn
     - added data-driven tests and init_data support
@@ -202,6 +202,7 @@ Thanks to all the contributors helping in this project.
 - Fix
     - running single test
     - nicer output of `object` CompareError
+    - fix mouse/kbd suppport for non root windows
 
 #### 0.3.0
 - New
