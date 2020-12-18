@@ -144,7 +144,7 @@ class QMLItem(pytest.Item):
             return
         elif "type" in result:
             if result["type"] == "SkipError":
-                pytest.skip(msg='result["message"]')
+                pytest.skip(msg=result["message"])
             elif result.get("expectFail", None) is not None:
                 expfail = result["expectFail"]  # True means xfail and False xpassed
                 aa = pytest.mark.xfail(
