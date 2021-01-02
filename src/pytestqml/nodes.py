@@ -54,6 +54,7 @@ class TestView(QQuickView):
     def exposeEvent(self, ev):
         super().exposeEvent(ev)
         self.isExposedEvent.emit()
+        self.setPosition(50, 50) # disable space between window which could hide content
 
     def setSource(self, source):
         super().setSource(source)
