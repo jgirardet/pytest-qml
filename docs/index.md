@@ -193,6 +193,10 @@ Thanks to all the contributors helping in this project.
 
 ## Changelog
 
+#### Unreleased
+- Fix
+    - fuzzyCompare with PyQt5
+    - mouseEvent on Popup
 #### 0.4.0
 - New
     - added fuzzyCompare, mouseWheel, mouseDrag, warn

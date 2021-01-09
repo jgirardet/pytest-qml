@@ -120,9 +120,15 @@ class QmlBot(QObject):
         """
         Compare actual and expected with delta accepted.
         """
+
         if isinstance(actual, bool) or isinstance(expected, bool):
             return False
 
+        if isinstance(actual, int):
+            actual = float(actual)
+
+        if isinstance(expected, int):
+            expected = float(expected)
         if isinstance(actual, float) and isinstance(expected, float):
             return abs(actual - expected) <= delta
 
