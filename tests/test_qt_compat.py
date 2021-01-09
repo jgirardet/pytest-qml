@@ -40,3 +40,4 @@ def test_qt_api():
     assert qt.QJSValue.toVariant
     assert qt.QQmlEngine.clearComponentCache
     assert qt.qmlRegisterType
+    assert qt.QApplication

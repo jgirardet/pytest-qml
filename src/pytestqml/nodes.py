@@ -4,15 +4,7 @@ from pytestqml.exceptions import PytestQmlError
 from pytestqml.qmlbot import QmlBot
 
 import pytest
-from pytestqml.qt import (
-    QGuiApplication,
-    QtCore,
-    QQuickView,
-    QPoint,
-    Qt,
-    Signal,
-    QTest,
-)
+from pytestqml.qt import QtCore, QQuickView, QPoint, Qt, Signal, QTest, QApplication
 from pytestqml.reporting import (
     get_error_line_in_stack,
     pick_error_context,
@@ -25,7 +17,7 @@ class TestView(QQuickView):
     isExposedEvent = Signal()
 
     def __init__(self, source, qmlfile, *args):
-        self.app = QGuiApplication.instance() or QGuiApplication([])
+        self.app = QApplication.instance() or QApplication([])
         qmlfile.config.hook.pytest_qml_applicationAvailable(app=self.app)
 
         super().__init__(*args)
@@ -54,7 +46,9 @@ class TestView(QQuickView):
     def exposeEvent(self, ev):
         super().exposeEvent(ev)
         self.isExposedEvent.emit()
-        self.setPosition(50, 50) # disable space between window which could hide content
+        self.setPosition(
+            50, 50
+        )  # disable space between window which could hide content
 
     def setSource(self, source):
         super().setSource(source)

@@ -21,9 +21,10 @@ QtGui = None
 QtQuick = None
 QtTest = None
 QtQml = None
+QtWidgets = None
 
 
-COMMON = ["QtCore", "QtGui", "QtQuick", "QtTest", "QtQml"]
+COMMON = ["QtCore", "QtGui", "QtQuick", "QtTest", "QtQml", "QtWidgets"]
 for module in COMMON:
     key = module.split(".")[-1]
     vars()[module] = import_module(".".join((qtapi, module)))
@@ -55,6 +56,9 @@ QQmlEngine = QtQml.QQmlEngine
 
 # QtTest
 QTest = QtTest.QTest
+
+# QtWidget
+QApplication = QtWidgets.QApplication
 
 if PYSIDE2:
     Property = QtCore.Property
