@@ -46,7 +46,7 @@ class QmlBot(QObject):
         check_params_cb=None,
     ):
         self._should_raise = lambda x: x  # qtbot hack
-        return QtBot.wait_signal(
+        return QtBot.waitSignal(
             self,
             signal=signal,
             timeout=timeout,
